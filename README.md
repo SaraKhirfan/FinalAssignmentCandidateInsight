@@ -1,4 +1,4 @@
-# FinalAssignmentCandidateInsight
+# Final Assignment - HTU
 # 🎯 Candidate Insights: Explainable AI-Based Resume Parsing and Job Matching 
 **Developed by:** Sara Khirfan
 **Institution:** Al-Hussein Technical Univerity
