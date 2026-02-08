@@ -182,7 +182,7 @@ Step 7: VERIFY - Check your math adds up correctly
 
 ### **Step 1: Clone Repository**
 ```bash
-git clone https://github.com/yourusername/candidate-insights.git
+git clone https://github.com/SaraKhirfan/FinalAssignmentCandidateInsight.git
 cd candidate-insights
 ```
 
@@ -408,16 +408,6 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 - **Anthropic:** Claude for development assistance and documentation generation
 - **Bootstrap Team:** UI framework
 - **Tesseract OCR:** Open-source OCR engine
-
----
-
-## 📧 Contact
-
-**Developer:** [Your Name]  
-**Email:** your.email@example.com  
-**LinkedIn:** [Your LinkedIn Profile]  
-**GitHub:** [@yourusername](https://github.com/yourusername)  
-**Project Link:** [https://github.com/yourusername/candidate-insights](https://github.com/yourusername/candidate-insights)
 
 ---
 
