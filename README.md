@@ -405,26 +405,6 @@ Contributions welcome! Please follow these steps:
 
 ---
 
-## 📸 Screenshots
-
-### Home Page
-![Home Page](screenshots/home.png)
-
-### Resume Upload
-![Resume Upload](screenshots/upload.png)
-
-### Match Results
-![Results Dashboard](screenshots/results.png)
-
-### Analytics Dashboard
-![Analytics](screenshots/analytics.png)
-
----
-
-**⭐ If you found this project helpful, please consider giving it a star!**
-
----
-
 *Last Updated: February 2026*
 ```
 
