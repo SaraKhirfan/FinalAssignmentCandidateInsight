@@ -407,22 +407,6 @@ Contributions welcome! Please follow these steps:
 
 *Last Updated: February 2026*
 ```
-
----
-
-## 📁 **Additional Files to Include:**
-
-### **1. LICENSE**
-```
-MIT License
-
-Copyright (c) 2026 [Your Name]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy...
-```
-
-### **2. .gitignore**
-```
 # Python
 __pycache__/
 *.py[cod]
