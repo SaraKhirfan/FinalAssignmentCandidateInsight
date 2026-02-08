@@ -395,12 +395,6 @@ Contributions welcome! Please follow these steps:
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
 ## 🙏 Acknowledgments
 
 - **OpenAI:** GPT-4o-mini API for intelligent text processing
