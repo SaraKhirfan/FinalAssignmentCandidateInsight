@@ -332,11 +332,6 @@ candidate-insights/
 | Bias Detection | 20 gender names | <3% variance | ✅ 1.2% |
 | Performance | 100 resumes | <9s per resume | ✅ 6.2s |
 
-### **Run Tests**
-```bash
-python -m pytest tests/ -v
-```
-
 ---
 
 ## 💡 Short Reflection
