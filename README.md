@@ -1,5 +1,6 @@
 # Final Assignment - Sara Khirfan - HTU
 # 🎯 Candidate Insights: Explainable AI-Based Resume Parsing and Job Matching 
+<img width="4155" height="1484" alt="logo" src="https://github.com/user-attachments/assets/7fcd2be2-8c85-4ae2-b0b8-3514f5feb393" />
 **Developed by:** Sara Khirfan
 **Institution:** Al-Hussein Technical Univerity
 **Course/Program:** ICT Upskilling program - Generative AI Track  
