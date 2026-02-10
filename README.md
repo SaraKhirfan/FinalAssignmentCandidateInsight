@@ -363,12 +363,12 @@ candidate-insights/
 
 ### **Planned Features**
 - [ ] **GPT-4o Integration:** Premium tier with 95% accuracy (+3% improvement)
+- [ ] **Candidate Chatbot:** AI assistant answers applicant questions (backend pending)
 - [ ] **Batch API:** Cost reduction via asynchronous processing
 - [ ] **Fine-Tuning:** Domain-specific model trained on company hiring patterns
 - [ ] **Analytics Dashboard:** Historical trends, skill gap analysis, diversity metrics
 - [ ] **ATS Integration:** APIs for Workday, Greenhouse, Lever compatibility
 - [ ] **Video Interview Analysis:** Transcript parsing for soft skills evaluation
-- [ ] **Candidate Chatbot:** AI assistant answers applicant questions (backend pending)
 
 ---
 
