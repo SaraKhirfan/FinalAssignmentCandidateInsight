@@ -168,24 +168,25 @@ MATCHING INSTRUCTIONS:
 
 ### **Structured Output Enforcement**
 ```json
-{
-  "reasoning": {
-    "skills_analysis": "Matched: [list]. Missing: [list]. Calculation: X/Y × 40 = Z",
-    "experience_analysis": "Has X years vs Y required. Assessment: [meets/exceeds/below]",
-    "education_analysis": "Has [degree] vs [required]. Assessment: [meets/exceeds/below]"
-  },
-  "scores": {
-    "skills_points": 32,
-    "experience_points": 35,
-    "education_points": 25,
-    "total_score": 92
-  },
-  "confidence": {
-    "skills": 95,
-    "experience": 88,
-    "education": 100
-  }
-}
+Extract the following information and return it in JSON format: 
+        {{
+            "name": "candidate's full name (in English/transliterated) - ONLY if clearly stated",
+            "email": "email address - ONLY if present",
+            "phone": "phone number - ONLY if present",
+            "skills": ["list of technical and soft skills in English - ONLY skills explicitly mentioned"],
+            "experience": "work experience summary in English - ONLY if mentioned",
+            "education": "educational qualifications in English - ONLY if mentioned",
+            "summary": "brief professional summary in English (2-3 sentences) - based on actual content",
+            "confidence": {{
+                "name": <0-100>,
+                "email": <0-100>,
+                "phone": <0-100>,
+                "skills": <0-100>,
+                "experience": <0-100>,
+                "education": <0-100>
+            }}
+        }}
+
 ```
 
 ---
