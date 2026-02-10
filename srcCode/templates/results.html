@@ -1,0 +1,2030 @@
+{% extends "base.html" %}
+
+{% block title %}Results - Candidate Insights{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.08) 0%, rgba(44, 90, 160, 0.08) 100%);
+        border-radius: 1rem;
+        border: 1px solid rgba(135, 43, 151, 0.1);
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        padding-bottom: 0.5rem;
+    }
+    
+    /* DASHBOARD COMBINED (STATS + CHART) */
+    .dashboard-combined {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* COMPACT STATS (LEFT SIDE) */
+    .stats-compact {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .stat-card-compact {
+        background: linear-gradient(135deg, white 0%, #faf9ff 100%);
+        border: 1px solid var(--gray-200);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card-compact::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+    
+    .stat-card-compact:hover {
+        transform: translateX(4px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .stat-compact-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    
+    .stat-compact-content {
+        flex: 1;
+    }
+    
+    .stat-compact-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-compact-label {
+        color: var(--gray-600);
+        font-size: 0.8125rem;
+        font-weight: 500;
+    }
+    
+    /* COMPACT CHART (RIGHT SIDE) */
+    .chart-compact {
+        background: linear-gradient(135deg, white 0%, #fafbff 100%);
+        border: 1px solid var(--gray-200);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .chart-compact-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary);
+        font-size: 18px;
+    }
+    
+    .chart-compact-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    
+    .chart-compact-container {
+        position: relative;
+        height: 200px;
+    }
+    
+    /* TOOLBAR */
+    .toolbar {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.25rem;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    /* AI Assistant Button Special Styling */
+    .btn-outline-success {
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        background: transparent;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-outline-success:hover {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(135, 43, 151, 0.3);
+    }
+    
+    .btn-outline-success .badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+        animation: pulse 2s infinite;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border: none;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+    }
+    
+    .btn-outline-success:hover .badge {
+        background: white !important;
+        color: var(--primary) !important;
+    }
+    
+    /* JOB INFO */
+    .job-info-card {
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.05) 0%, rgba(44, 90, 160, 0.05) 100%);
+        border: 1px solid var(--gray-200);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .job-info-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+    
+    .job-info-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .job-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        flex: 1;
+    }
+    
+    .job-preview {
+        color: var(--gray-600);
+        line-height: 1.6;
+        font-size: 0.9375rem;
+    }
+    
+    /* CANDIDATE CARDS */
+    .candidates-section {
+        margin-bottom: 2rem;
+    }
+    
+    .candidates-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .results-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+    
+    .candidate-card {
+        background: linear-gradient(135deg, white 0%, #fafbff 100%);
+        border: 1px solid var(--gray-200);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .candidate-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+    
+    .candidate-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-4px);
+    }
+    
+    .candidate-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.25rem;
+        gap: 1rem;
+    }
+    
+    .candidate-rank-badge {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(135, 43, 151, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .candidate-info {
+        flex: 1;
+    }
+    
+    .candidate-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+    
+    .candidate-score-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 2rem;
+        font-weight: 600;
+        color: #065f46;
+    }
+    
+    .score-number {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+    
+    /* GAUGE CHART */
+    .gauge-container {
+        width: 130px;
+        height: 130px;
+        position: relative;
+        flex-shrink: 0;
+    }
+    
+    .gauge-container canvas {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    
+    /* SKILLS SECTION */
+    .skills-section {
+        margin-top: 1.5rem;
+    }
+    
+    .skills-title {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9375rem;
+    }
+    
+    /* Skills Summary Card */
+    .skills-summary {
+        margin-bottom: 1.5rem;
+    }
+    
+    .skill-summary-card {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: 0.75rem;
+        padding: 1rem;
+    }
+    
+    .skill-summary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .skill-summary-label {
+        font-weight: 600;
+        color: var(--gray-700);
+        font-size: 0.875rem;
+    }
+    
+    .skill-summary-percentage {
+        font-weight: 700;
+        font-size: 1.25rem;
+    }
+    
+    .skill-progress-bar {
+        height: 12px;
+        background: var(--gray-200);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .skill-progress-fill {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 1s ease;
+    }
+    
+    .skill-summary-count {
+        font-size: 0.8125rem;
+        color: var(--gray-600);
+        text-align: center;
+    }
+    
+    /* Skills Groups */
+    .skills-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .skills-group:last-child {
+        margin-bottom: 0;
+    }
+    
+    .skills-group-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--gray-700);
+    }
+    
+    .skills-count {
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .skills-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .skill-badge {
+        padding: 0.375rem 0.875rem;
+        border-radius: 2rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    
+    .skill-matched {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+    }
+    
+    .skill-missing {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+    }
+    
+    /* ANALYSIS */
+    .analysis-section {
+        margin-top: 1.5rem;
+        padding: 1.25rem;
+        background: var(--gray-50);
+        border-radius: 0.75rem;
+        border: 1px solid var(--gray-200);
+    }
+    
+    .analysis-item {
+        margin-bottom: 0.875rem;
+        padding-bottom: 0.875rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .analysis-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .analysis-label {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.375rem;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.875rem;
+    }
+    
+    .analysis-text {
+        color: var(--gray-600);
+        line-height: 1.6;
+        font-size: 0.875rem;
+    }
+    
+    /* EMPTY STATE */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border: 2px dashed var(--gray-300);
+        border-radius: 1rem;
+    }
+    
+    /* Ensure masking works in modals */
+    .modal .sensitive-data {
+        filter: blur(6px) !important;
+        user-select: none !important;
+        cursor: not-allowed !important;
+        pointer-events: none !important;
+    }
+    
+    .modal .sensitive-data:hover {
+        filter: blur(8px) !important;
+    }
+    
+    .resume-details h5,
+    .resume-details p {
+        margin-bottom: 0.75rem;
+    }
+    
+    .resume-details h6 {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .resume-details .badge {
+        font-size: 0.8125rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.1) 0%, rgba(44, 90, 160, 0.1) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: var(--primary);
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.75rem;
+    }
+    
+    .empty-description {
+        color: var(--gray-500);
+        margin-bottom: 2rem;
+    }
+    
+    /* STICKY FOOTER */
+    .sticky-footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid var(--gray-200);
+        padding: 1.25rem;
+        margin: 2rem -2rem -2.5rem -2rem;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+    
+    .sticky-footer .btn {
+        box-shadow: 0 4px 12px rgba(135, 43, 151, 0.3);
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .toolbar {
+            flex-direction: column;
+        }
+        
+        .dashboard-combined {
+            grid-template-columns: 1fr;
+        }
+        
+        .chart-compact-container {
+            height: 180px;
+        }
+        
+        .candidate-header {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .gauge-container {
+            margin: 0 auto;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .action-buttons .btn {
+            width: 100%;
+        }
+        
+        .sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 0;
+            padding: 1rem;
+        }
+        
+        .results-grid {
+            margin-bottom: 6rem;
+        }
+    }
+    
+    /* ===================================
+       CHATBOT STYLES
+       =================================== */
+    
+    /* Floating Chat Button */
+    .chat-trigger {
+        position: fixed;
+        bottom: 6rem;  /* Increased from 2rem to avoid footer buttons */
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(135, 43, 151, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .chat-trigger:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(135, 43, 151, 0.6);
+    }
+    
+    .chat-trigger .chat-label {
+        display: none;
+    }
+    
+    /* Chat Panel */
+    .chat-panel {
+        position: fixed;
+        bottom: 6rem;  /* Match chat button position */
+        right: 2rem;
+        width: 400px;
+        height: 550px;
+        max-height: calc(100vh - 10rem);  /* Adjusted for new position */
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+        z-index: 1001;
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+    }
+    
+    .chat-panel.active {
+        display: flex;
+    }
+    
+    /* Chat Header */
+    .chat-header-chat {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        border-radius: 1rem 1rem 0 0;
+    }
+    
+    .chat-header-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .chat-header-avatar {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+    
+    .chat-header-text h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    
+    .chat-status {
+        margin: 0;
+        font-size: 0.75rem;
+        opacity: 0.9;
+    }
+    
+    .chat-close {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: all 0.2s;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .chat-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Chat Messages */
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 1rem;
+        background: #f8f9fa;
+        min-height: 0;
+    }
+    
+    /* Message */
+    .message {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        animation: messageSlide 0.3s ease;
+    }
+    
+    @keyframes messageSlide {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .message-ai {
+        justify-content: flex-start;
+    }
+    
+    .message-user {
+        justify-content: flex-end;
+    }
+    
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    
+    .message-user .message-avatar {
+        background: var(--gray-300);
+    }
+    
+    .message-content {
+        max-width: 75%;
+    }
+    
+    .message-bubble {
+        background: white;
+        padding: 0.75rem 1rem;
+        border-radius: 1rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        line-height: 1.5;
+    }
+    
+    .message-user .message-bubble {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+    }
+    
+    .message-bubble ul {
+        margin: 0.5rem 0;
+        padding-left: 1.25rem;
+    }
+    
+    .message-bubble strong {
+        font-weight: 700;
+    }
+    
+    .message-time {
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        margin-top: 0.25rem;
+        padding-left: 0.5rem;
+    }
+    
+    /* Suggestions */
+    .chat-suggestions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .suggestion-chip {
+        background: white;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        padding: 0.75rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: left;
+    }
+    
+    .suggestion-chip:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateX(4px);
+    }
+    
+    /* Chat Input */
+    .chat-input {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: white;
+        border-top: 1px solid var(--gray-200);
+        flex-shrink: 0;
+        border-radius: 0 0 1rem 1rem;
+    }
+    
+    .chat-input input {
+        flex: 1;
+        border: 2px solid var(--gray-200);
+        border-radius: 2rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+    
+    .chat-input input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(135, 43, 151, 0.1);
+    }
+    
+    .chat-send {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+    
+    .chat-send:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(135, 43, 151, 0.3);
+    }
+    
+    .chat-send:active {
+        transform: scale(0.95);
+    }
+    
+    /* Typing Indicator */
+    .typing-indicator {
+        display: flex;
+        gap: 0.25rem;
+        padding: 0.5rem 0;
+    }
+    
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--gray-400);
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.5;
+        }
+        30% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+    }
+    
+    /* Mobile Responsive - Chatbot */
+    @media (max-width: 768px) {
+        .chat-panel {
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            top: 0;
+            border-radius: 0;
+        }
+        
+        .chat-trigger {
+            bottom: 1rem;
+            right: 1rem;
+        }
+        
+        .message-content {
+            max-width: 85%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title" data-i18n="resultsTitle">Match Results Dashboard</h1>
+</div>
+
+{% if results %}
+<!-- TOOLBAR - MOVED TO TOP -->
+<div class="toolbar">
+    <button class="btn btn-primary" onclick="exportToPDF()">
+        <i class="bi bi-file-earmark-pdf"></i>
+        <span data-i18n="exportPDF">Export to PDF</span>
+    </button>
+    <button class="btn btn-outline-primary" onclick="rematch()">
+        <i class="bi bi-arrow-repeat"></i>
+        <span data-i18n="rematch">Run New Match</span>
+    </button>
+    <a href="{{ url_for('jobs_page') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+        <span data-i18n="backJobs">Back to Jobs</span>
+    </a>
+    <button class="btn btn-outline-success" onclick="toggleChat()" style="margin-left: auto;">
+       <i class="bi bi-chat-dots-fill"></i>
+        <span data-i18n="aiAssistantBtn">Ask AI About Results</span>
+    </button>
+</div>
+
+<!-- JOB INFO -->
+{% if job_description %}
+<div class="job-info-card">
+    <div class="job-info-header">
+        <div class="job-title">📋 {{ job_title or 'Job Description' }}</div>
+        <button class="btn btn-sm btn-outline-primary" onclick="viewJobDescription()" title="View Full Job Description">
+            <i class="bi bi-eye"></i>
+        </button>
+    </div>
+    <div class="job-preview">
+        {{ job_description[:300] }}{% if job_description|length > 300 %}...{% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- DASHBOARD OVERVIEW & CHART COMBINED -->
+<div class="dashboard-combined">
+    <!-- STATS CARDS (LEFT SIDE) -->
+    <div class="stats-compact">
+        <div class="stat-card-compact">
+            <div class="stat-compact-icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-compact-content">
+                <div class="stat-compact-value">{{ total_resumes|default(results|length) }}</div>
+                <div class="stat-compact-label" data-i18n="totalCandidates">Total Candidates</div>
+            </div>
+        </div>
+        <div class="stat-card-compact">
+            <div class="stat-compact-icon">
+                <i class="bi bi-trophy"></i>
+            </div>
+            <div class="stat-compact-content">
+                <div class="stat-compact-value">{{ results[0].match_score }}%</div>
+                <div class="stat-compact-label" data-i18n="topMatch">Top Match</div>
+            </div>
+        </div>
+        <div class="stat-card-compact">
+            <div class="stat-compact-icon">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="stat-compact-content">
+                <div class="stat-compact-value">{{ ((results[0].match_score + results[1].match_score if results|length > 1 else results[0].match_score + results[2].match_score if results|length > 2 else results[0].match_score) / (results|length))|round|int }}%</div>
+                <div class="stat-compact-label" data-i18n="avgMatch">Average Match</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- COMPARISON CHART (RIGHT SIDE) -->
+    <div class="chart-compact">
+        <div class="chart-compact-header">
+            <i class="bi bi-bar-chart"></i>
+            <h3 class="chart-compact-title" data-i18n="candidateComparison">Candidate Comparison</h3>
+        </div>
+        <div class="chart-compact-container">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- CANDIDATES SECTION -->
+<div class="candidates-section">
+    <div class="candidates-header">
+        <div class="section-icon">
+            <i class="bi bi-star"></i>
+        </div>
+        <h3 class="section-title" data-i18n="topMatches">Top Matched Candidates</h3>
+    </div>
+    
+    <div class="results-grid">
+        {% for result in results %}
+        <div class="candidate-card" id="candidate-{{ loop.index }}">
+            <div class="candidate-header">
+                <div class="candidate-rank-badge">#{{ loop.index }}</div>
+                
+                <div class="candidate-info">
+                    <div class="candidate-name sensitive-data">{{ result.candidate_name }}</div>
+                    <div class="candidate-score-badge">
+                        <i class="bi bi-stars"></i>
+                        <span class="score-number">{{ result.match_score }}%</span>
+                        <span data-i18n="match">Match</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewCandidateResume('{{ result.resume_id if result.resume_id else result.candidate_name }}')" title="View Resume">
+                        <i class="bi bi-eye"></i>
+                        <span class="ms-1" data-i18n="viewResume">View Resume</span>
+                    </button>
+                    
+                    <div class="gauge-container">
+                        <canvas id="gaugeChart{{ loop.index }}"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SKILLS BAR CHART -->
+            {% if result.matched_skills or result.missing_skills %}
+            <div class="skills-section">
+                <div class="skills-title">
+                    <i class="bi bi-diagram-3"></i>
+                    <span data-i18n="skillsBreakdown">Skills Overview</span>
+                </div>
+                
+                <!-- Skills Match Summary -->
+                <div class="skills-summary">
+                    {% set total_skills = (result.matched_skills|length if result.matched_skills else 0) + (result.missing_skills|length if result.missing_skills else 0) %}
+                    {% set matched_count = result.matched_skills|length if result.matched_skills else 0 %}
+                    {% set match_percentage = ((matched_count / total_skills * 100)|round|int) if total_skills > 0 else 0 %}
+                    
+                    <div class="skill-summary-card">
+                        <div class="skill-summary-header">
+                            <span class="skill-summary-label" data-i18n="technicalSkills">Technical Skills</span>
+                        </div>
+                        <div class="skill-progress-bar">
+                            <div class="skill-progress-fill" style="width: {{ match_percentage }}%; background: {% if match_percentage >= 80 %}linear-gradient(90deg, #10b981 0%, #059669 100%){% elif match_percentage >= 60 %}linear-gradient(90deg, #f59e0b 0%, #d97706 100%){% else %}linear-gradient(90deg, #ef4444 0%, #dc2626 100%){% endif %};"></div>
+                        </div>
+                        <div class="skill-summary-count">
+                            <span>{{ matched_count }} <span data-i18n="of">of</span> {{ total_skills }} <span data-i18n="required">required skills matched</span></span>
+                            {% if result.score_breakdown %}
+                            <div style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
+                                <i class="bi bi-calculator"></i> Contributes {{ result.score_breakdown.skills_points|default(0) }}/40 points to overall score
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Matched Skills -->
+                {% if result.matched_skills %}
+                <div class="skills-group">
+                    <div class="skills-group-header">
+                        <i class="bi bi-check-circle-fill" style="color: #10b981;"></i>
+                        <span data-i18n="matchedSkills">Matched Skills</span>
+                        <span class="skills-count">({{ result.matched_skills|length }})</span>
+                    </div>
+                    <div class="skills-badges">
+                        {% for skill in result.matched_skills %}
+                        <span class="skill-badge skill-matched">
+                            <i class="bi bi-check-circle"></i> {{ skill }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Missing Skills -->
+                {% if result.missing_skills %}
+                <div class="skills-group">
+                    <div class="skills-group-header">
+                        <i class="bi bi-x-circle-fill" style="color: #ef4444;"></i>
+                        <span data-i18n="missingSkills">Missing Skills</span>
+                        <span class="skills-count">({{ result.missing_skills|length }})</span>
+                    </div>
+                    <div class="skills-badges">
+                        {% for skill in result.missing_skills %}
+                        <span class="skill-badge skill-missing">
+                            <i class="bi bi-x-circle"></i> {{ skill }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- EXPERIENCE & EDUCATION MATCH -->
+            {% if result.experience_match or result.education_match %}
+            <div class="requirements-section" style="margin-top: 1.5rem;">
+                <div class="skills-title">
+                    <i class="bi bi-clipboard-check"></i>
+                    <span data-i18n="requirementsMatch">Requirements Match</span>
+                </div>
+                
+                <!-- Experience Match Card -->
+                {% if result.experience_match %}
+                <div class="requirement-card" style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
+                    <div class="requirement-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-briefcase-fill" style="color: var(--primary); font-size: 1.25rem;"></i>
+                            <span style="font-weight: 600; color: var(--gray-700); font-size: 0.875rem;" data-i18n="experienceReq">Experience</span>
+                        </div>
+                        <div class="requirement-status" style="display: flex; align-items: center; gap: 0.5rem;">
+                            {% set exp_lower = result.experience_match.lower() %}
+                            {# Check for "below" or "less than" FIRST - these are gaps even if they start with "Meets requirements" #}
+                            {% if 'below' in exp_lower or 'less than' in exp_lower or 'only' in exp_lower %}
+                            <i class="bi bi-x-circle-fill" style="color: #ef4444; font-size: 1.1rem;"></i>
+                            <span style="font-weight: 700; font-size: 1rem; color: #991b1b;">Gap</span>
+                            {% if result.score_breakdown %}
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">({{ result.score_breakdown.experience_points|default(0) }}/35 pts)</span>
+                            {% endif %}
+                            {# Then check for actual matches #}
+                            {% elif ('meets requirements' in exp_lower or 'exceeds' in exp_lower or 'exceeding' in exp_lower) and 'below' not in exp_lower %}
+                            <i class="bi bi-check-circle-fill" style="color: #10b981; font-size: 1.1rem;"></i>
+                            <span style="font-weight: 700; font-size: 1rem; color: #065f46;">Match</span>
+                            {% if result.score_breakdown %}
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">({{ result.score_breakdown.experience_points|default(0) }}/35 pts)</span>
+                            {% endif %}
+                            {# Limited/partial experience #}
+                            {% elif 'limited' in exp_lower or 'some experience' in exp_lower or 'partial' in exp_lower %}
+                            <i class="bi bi-exclamation-circle-fill" style="color: #f59e0b; font-size: 1.1rem;"></i>
+                            <span style="font-weight: 700; font-size: 1rem; color: #92400e;">Partial</span>
+                            {% if result.score_breakdown %}
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">({{ result.score_breakdown.experience_points|default(0) }}/35 pts)</span>
+                            {% endif %}
+                            {# Default to gap #}
+                            {% else %}
+                            <i class="bi bi-x-circle-fill" style="color: #ef4444; font-size: 1.1rem;"></i>
+                            <span style="font-weight: 700; font-size: 1rem; color: #991b1b;">Gap</span>
+                            {% if result.score_breakdown %}
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">({{ result.score_breakdown.experience_points|default(0) }}/35 pts)</span>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.6; margin: 0;">{{ result.experience_match }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- Education Match Card -->
+                {% if result.education_match %}
+                <div class="requirement-card" style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 0.75rem; padding: 1rem;">
+                    <div class="requirement-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-mortarboard-fill" style="color: var(--primary); font-size: 1.25rem;"></i>
+                            <span style="font-weight: 600; color: var(--gray-700); font-size: 0.875rem;" data-i18n="educationReq">Education</span>
+                        </div>
+                        <div class="requirement-status" style="display: flex; align-items: center; gap: 0.5rem;">
+                            {% set edu_lower = result.education_match.lower() %}
+                            {% if 'meets requirements' in edu_lower or 'has appropriate' in edu_lower or 'exceeds' in edu_lower or 'appropriate education' in edu_lower %}
+                            <i class="bi bi-check-circle-fill" style="color: #10b981; font-size: 1.1rem;"></i>
+                            <span style="font-weight: 700; font-size: 1rem; color: #065f46;">Match</span>
+                            {% if result.score_breakdown %}
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">({{ result.score_breakdown.education_points|default(0) }}/25 pts)</span>
+                            {% endif %}
+                            {% elif 'acceptable' in edu_lower or 'relevant education' in edu_lower or 'partial' in edu_lower %}
+                            <i class="bi bi-exclamation-circle-fill" style="color: #f59e0b; font-size: 1.1rem;"></i>
+                            <span style="font-weight: 700; font-size: 1rem; color: #92400e;">Partial</span>
+                            {% if result.score_breakdown %}
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">({{ result.score_breakdown.education_points|default(0) }}/25 pts)</span>
+                            {% endif %}
+                            {% else %}
+                            <i class="bi bi-x-circle-fill" style="color: #ef4444; font-size: 1.1rem;"></i>
+                            <span style="font-weight: 700; font-size: 1rem; color: #991b1b;">Gap</span>
+                            {% if result.score_breakdown %}
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">({{ result.score_breakdown.education_points|default(0) }}/25 pts)</span>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.6; margin: 0;">{{ result.education_match }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- Score Calculation Explanation -->
+                {% if result.score_breakdown %}
+                <div style="margin-top: 1rem; padding: 0.75rem; background: linear-gradient(135deg, rgba(135, 43, 151, 0.05) 0%, rgba(44, 90, 160, 0.05) 100%); border-radius: 0.5rem; border-left: 3px solid var(--primary);">
+                    <div style="font-size: 0.8125rem; color: var(--gray-700); font-weight: 600; margin-bottom: 0.5rem;">
+                        <i class="bi bi-calculator"></i> <span data-i18n="scoreCalculation">Score Calculation</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600); line-height: 1.6;">
+                        {{ result.score_breakdown.skills_points|default(0) }} (skills) + 
+                        {{ result.score_breakdown.experience_points|default(0) }} (experience) + 
+                        {{ result.score_breakdown.education_points|default(0) }} (education) = 
+                        <strong style="color: var(--primary);">{{ result.match_score }}%</strong>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- ANALYSIS -->
+            {% if result.overall_explanation %}
+            <div class="analysis-section">
+                <div class="analysis-item">
+                    <div class="analysis-label">
+                        <i class="bi bi-lightbulb-fill"></i>
+                        <span data-i18n="overallAnalysis">Overall Analysis</span>
+                    </div>
+                    <div class="analysis-text">{{ result.overall_explanation }}</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- STICKY FOOTER -->
+<div class="sticky-footer">
+    <div class="action-buttons">
+        <a href="{{ url_for('jobs_page') }}" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-arrow-left"></i>
+            <span data-i18n="selectDifferent">Select Different Job</span>
+        </a>
+        <a href="{{ url_for('resumes_page') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle"></i>
+            <span data-i18n="addMore">Add More Resumes</span>
+        </a>
+    </div>
+</div>
+
+{% else %}
+<!-- EMPTY STATE -->
+<div class="empty-state">
+    <div class="empty-icon">
+        <i class="bi bi-graph-up"></i>
+    </div>
+    <h3 class="empty-title" data-i18n="noResults">No Results Yet</h3>
+    <p class="empty-description" data-i18n="noResultsDesc">Select a job and match with resumes to see results.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="{{ url_for('resumes_page') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-file-earmark-person"></i>
+            <span data-i18n="uploadResumes">Upload Resumes</span>
+        </a>
+        <a href="{{ url_for('jobs_page') }}" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-briefcase"></i>
+            <span data-i18n="addJobs">Add Jobs</span>
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- CHATBOT UI -->
+<!-- Floating Chat Button -->
+<button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
+    <i class="bi bi-chat-dots-fill"></i>
+</button>
+
+<!-- Chat Panel -->
+<div class="chat-panel" id="chatPanel">
+    <!-- Chat Header -->
+    <div class="chat-header-chat">
+        <div class="chat-header-info">
+            <div class="chat-header-avatar">🤖</div>
+            <div class="chat-header-text">
+                <h5 data-i18n="aiAssistant">AI Assistant</h5>
+                <p class="chat-status" data-i18n="online">Online</p>
+            </div>
+        </div>
+        <button class="chat-close" onclick="toggleChat()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    
+    <!-- Chat Messages -->
+    <div class="chat-messages" id="chatMessages">
+        <!-- Welcome Message -->
+        <div class="message message-ai">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+                <div class="message-bubble">
+                    <span data-i18n="chatWelcome">Hi! I'm your AI assistant. I can help you analyze the</span> <strong>{{ results|length if results else 0 }}</strong> <span data-i18n="chatWelcome2">matched candidates. You can ask me questions like:</span>
+                    <ul>
+                        <li data-i18n="chatQ1">"Which candidate has the best technical skills?"</li>
+                        <li data-i18n="chatQ2">"Compare the top 2 candidates"</li>
+                        <li data-i18n="chatQ3">"What are the strengths of candidate #1?"</li>
+                    </ul>
+                </div>
+                <div class="message-time" data-i18n="justNow">Just now</div>
+            </div>
+        </div>
+        
+        {% if results %}
+        <!-- Suggested Questions -->
+        <div class="chat-suggestions">
+            <button class="suggestion-chip" onclick="askQuestion(this.textContent)">
+                💡 <span data-i18n="suggestTop">Tell me about the top candidate</span>
+            </button>
+            <button class="suggestion-chip" onclick="askQuestion(this.textContent)">
+                📊 <span data-i18n="suggestCompare">Compare all candidates</span>
+            </button>
+            <button class="suggestion-chip" onclick="askQuestion(this.textContent)">
+                🎯 <span data-i18n="suggestSkills">What skills are missing?</span>
+            </button>
+            <button class="suggestion-chip" onclick="askQuestion(this.textContent)">
+                👔 <span data-i18n="suggestInterview">Who should I interview first?</span>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Chat Input -->
+    <div class="chat-input">
+        <input 
+            type="text" 
+            id="chatInput" 
+            placeholder="Ask me anything about these candidates..."
+            data-i18n-placeholder="chatPlaceholder"
+            onkeypress="if(event.key==='Enter') sendMessage()"
+        >
+        <button class="chat-send" onclick="sendMessage()">
+            <i class="bi bi-send-fill"></i>
+        </button>
+    </div>
+</div>
+
+<!-- VIEW JOB DESCRIPTION MODAL -->
+<div class="modal fade" id="viewJobModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-briefcase me-2"></i>
+                    <span id="modalJobTitle">{{ job_title or 'Job Description' }}</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <pre id="modalJobContent" style="white-space: pre-wrap; font-family: inherit; line-height: 1.6;">{{ job_description }}</pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i>
+                    <span data-i18n="close">Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW CANDIDATE RESUME MODAL -->
+<div class="modal fade" id="viewCandidateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title sensitive-data" id="viewCandidateName">
+                    <i class="bi bi-file-earmark-person me-2"></i>
+                    <span data-i18n="resumeDetails">Resume Details</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="viewCandidateContent">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i>
+                    <span data-i18n="close">Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// Chart.js Configuration
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.color = '#6b7280';
+
+{% if results %}
+// COMPARISON CHART
+const comparisonCtx = document.getElementById('comparisonChart');
+if (comparisonCtx) {
+    new Chart(comparisonCtx, {
+        type: 'bar',
+        data: {
+            labels: [
+                {% for result in results %}
+                'Candidate #{{ loop.index }}'{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Match Score',
+                data: [
+                    {% for result in results %}
+                    {{ result.match_score }}{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                backgroundColor: function(context) {
+                    const chart = context.chart;
+                    const {ctx, chartArea} = chart;
+                    if (!chartArea) return null;
+                    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                    gradient.addColorStop(0, '#872b97');
+                    gradient.addColorStop(1, '#2c5aa0');
+                    return gradient;
+                },
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                    padding: 12,
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#872b97',
+                    borderWidth: 1,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Match Score: ' + context.parsed.y + '%';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// GAUGE CHARTS for each candidate
+{% for result in results %}
+const gaugeCtx{{ loop.index }} = document.getElementById('gaugeChart{{ loop.index }}');
+if (gaugeCtx{{ loop.index }}) {
+    new Chart(gaugeCtx{{ loop.index }}, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [{{ result.match_score }}, {{ 100 - result.match_score }}],
+                backgroundColor: [
+                    {% if result.match_score >= 80 %}
+                    '#10b981',
+                    {% elif result.match_score >= 60 %}
+                    '#f59e0b',
+                    {% else %}
+                    '#ef4444',
+                    {% endif %}
+                    '#e5e7eb'
+                ],
+                borderWidth: 0,
+                circumference: 180,
+                rotation: 270
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '75%',
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: false
+                }
+            }
+        },
+        plugins: [{
+            id: 'centerText',
+            beforeDraw: function(chart) {
+                const width = chart.width;
+                const height = chart.height;
+                const ctx = chart.ctx;
+                ctx.restore();
+                const fontSize = (height / 100).toFixed(2);
+                ctx.font = 'bold ' + fontSize + 'em Inter, sans-serif';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#111827';
+                const text = '{{ result.match_score }}%';
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 1.4;
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+            }
+        }]
+    });
+}
+{% endfor %}
+{% endif %}
+
+async function exportToPDF() {
+    // Show loading indicator
+    const exportBtn = event.target.closest('button');
+    const originalHTML = exportBtn.innerHTML;
+    exportBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> <span>Generating PDF...</span>';
+    exportBtn.disabled = true;
+    
+    try {
+        // Get jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // Hide elements we don't want in PDF
+        const toolbar = document.querySelector('.toolbar');
+        const stickyFooter = document.querySelector('.sticky-footer');
+        const pageHeader = document.querySelector('.page-header');
+        
+        if (toolbar) toolbar.style.display = 'none';
+        if (stickyFooter) stickyFooter.style.display = 'none';
+        
+        // Get the main content
+        const content = document.querySelector('.main-content');
+        
+        // Capture as image
+        const canvas = await html2canvas(content, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff'
+        });
+        
+        // Restore hidden elements
+        if (toolbar) toolbar.style.display = '';
+        if (stickyFooter) stickyFooter.style.display = '';
+        
+        // Create PDF
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        let position = 0;
+        
+        // Add image to PDF
+        const imgData = canvas.toDataURL('image/png');
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        
+        // Add additional pages if needed
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+        
+        // Generate filename with timestamp
+        const timestamp = new Date().toISOString().slice(0, 10);
+        const jobTitle = '{{ job_title|default("Match Results") }}'.replace(/[^a-z0-9]/gi, '_');
+        const filename = `${jobTitle}_${timestamp}.pdf`;
+        
+        // Download PDF
+        pdf.save(filename);
+        
+        // Show success message
+        exportBtn.innerHTML = '<i class="bi bi-check-circle"></i> <span>Downloaded!</span>';
+        setTimeout(() => {
+            exportBtn.innerHTML = originalHTML;
+            exportBtn.disabled = false;
+        }, 2000);
+        
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        alert('Error generating PDF. Please try again.');
+        exportBtn.innerHTML = originalHTML;
+        exportBtn.disabled = false;
+    }
+}
+
+function rematch() {
+    if (confirm('Re-run the matching analysis?')) {
+        window.location.href = "{{ url_for('match_and_show_results') }}";
+    }
+}
+
+function viewJobDescription() {
+    const modal = new bootstrap.Modal(document.getElementById('viewJobModal'));
+    modal.show();
+}
+
+function viewCandidateResume(resumeId) {
+    const modal = new bootstrap.Modal(document.getElementById('viewCandidateModal'));
+    modal.show();
+    
+    // Show loading state
+    document.getElementById('viewCandidateContent').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-3 text-muted">Loading resume...</p>
+        </div>
+    `;
+    
+    console.log('Fetching resume with ID:', resumeId); // Debug log
+    
+    fetch(`/api/resumes/view/${resumeId}`)
+        .then(response => {
+            console.log('Response status:', response.status); // Debug log
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Resume data received:', data); // Debug log
+            
+            // Keep title generic - don't show name
+            const lang = localStorage.getItem('preferredLanguage') || 'en';
+            document.getElementById('viewCandidateName').innerHTML = `<i class="bi bi-file-earmark-person me-2"></i><span>${lang === 'ar' ? 'تفاصيل السيرة الذاتية' : 'Resume Details'}</span>`;
+            
+            let html = '<div class="resume-details">';
+            
+            // Personal Info
+            if (data.name) {
+                html += `<h5><i class="bi bi-person me-2"></i><span class="sensitive-data">${data.name}</span></h5>`;
+            }
+            
+            if (data.email || data.phone) {
+                html += '<div class="mb-3">';
+                if (data.email) html += `<p><i class="bi bi-envelope me-2"></i><span class="sensitive-data">${data.email}</span></p>`;
+                if (data.phone) html += `<p><i class="bi bi-telephone me-2"></i><span class="sensitive-data">${data.phone}</span></p>`;
+                html += '</div>';
+            }
+            
+            // Summary
+            if (data.summary) {
+                html += `<div class="mb-3"><h6>Summary:</h6><p>${data.summary}</p></div>`;
+            }
+            
+            // Skills
+            if (data.skills && data.skills.length > 0) {
+                html += '<div class="mb-3"><h6>Skills:</h6><div class="d-flex flex-wrap gap-2">';
+                data.skills.forEach(s => html += `<span class="badge bg-primary">${s}</span>`);
+                html += '</div></div>';
+            }
+            
+            // Experience
+            if (data.experience) {
+                html += `<div class="mb-3"><h6>Experience:</h6><p style="white-space: pre-wrap;">${data.experience}</p></div>`;
+            }
+            
+            // Education
+            if (data.education) {
+                html += `<div class="mb-3"><h6>Education:</h6><p style="white-space: pre-wrap;">${data.education}</p></div>`;
+            }
+            
+            // If no data at all
+            if (!data.name && !data.email && !data.phone && !data.summary && !data.skills && !data.experience && !data.education) {
+                html += '<div class="alert alert-info">No detailed information available for this resume.</div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('viewCandidateContent').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error loading resume:', error); // Debug log
+            document.getElementById('viewCandidateContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <h6><i class="bi bi-exclamation-triangle me-2"></i>Error Loading Resume</h6>
+                    <p class="mb-2">Unable to load resume details.</p>
+                    <small class="text-muted">Error: ${error.message}</small>
+                    <hr>
+                    <p class="mb-0"><strong>Possible causes:</strong></p>
+                    <ul class="mb-0">
+                        <li>The API endpoint /api/resumes/view/${resumeId} may not exist</li>
+                        <li>Resume ID "${resumeId}" may be incorrect</li>
+                        <li>Backend may not be running</li>
+                    </ul>
+                </div>
+            `;
+        });
+}
+
+// ===================================
+// CHATBOT FUNCTIONS (UI ONLY)
+// ===================================
+
+function toggleChat() {
+    const panel = document.getElementById('chatPanel');
+    const trigger = document.getElementById('chatTrigger');
+    
+    if (panel.classList.contains('active')) {
+        panel.classList.remove('active');
+        trigger.style.display = 'flex';
+    } else {
+        panel.classList.add('active');
+        trigger.style.display = 'none';
+    }
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addMessage(message, 'user');
+    input.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Simulate AI response (UI ONLY - Replace with real API call later)
+    setTimeout(() => {
+        hideTypingIndicator();
+        const aiResponse = generateMockResponse(message);
+        addMessage(aiResponse, 'ai');
+    }, 1500);
+}
+
+function askQuestion(question) {
+    // Remove emoji from question text
+    const cleanQuestion = question.replace(/[^\w\s?]/gi, '').trim();
+    document.getElementById('chatInput').value = cleanQuestion;
+    sendMessage();
+}
+
+function addMessage(text, type) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message message-${type}`;
+    
+    const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    if (type === 'ai') {
+        messageDiv.innerHTML = `
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+                <div class="message-bubble">${text}</div>
+                <div class="message-time">${time}</div>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <div class="message-bubble">${text}</div>
+                <div class="message-time">${time}</div>
+            </div>
+            <div class="message-avatar">👤</div>
+        `;
+    }
+    
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message message-ai';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="message-content">
+            <div class="message-bubble">
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+    `;
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) indicator.remove();
+}
+
+function generateMockResponse(question) {
+    // Mock responses for UI demonstration
+    // In production, this would call your backend API
+    
+    const lowerQuestion = question.toLowerCase();
+    
+    {% if results %}
+    // Dynamic responses using actual candidate data
+    if (lowerQuestion.includes('top') || lowerQuestion.includes('best') || lowerQuestion.includes('first')) {
+        return `Based on the analysis, <strong class="sensitive-data">{{ results[0].candidate_name }}</strong> is the top candidate with a <strong>{{ results[0].match_score }}%</strong> match score. They have the strongest alignment with the job requirements and possess the key skills needed for this role.`;
+    }
+    
+    if (lowerQuestion.includes('compare')) {
+        let response = 'Here\'s a comparison of the top {{ results|length }} candidates:<ul>';
+        {% for result in results %}
+        response += '<li><strong>Candidate #{{ loop.index }}</strong>: {{ result.match_score }}% match</li>';
+        {% endfor %}
+        response += '</ul>';
+        return response;
+    }
+    
+    if (lowerQuestion.includes('skill')) {
+        return 'Based on the analysis, the most commonly matched skills include: {% if results[0].matched_skills %}{{ results[0].matched_skills[:3]|join(", ") }}{% endif %}. Some candidates may be missing advanced certifications or specific niche expertise.';
+    }
+    
+    if (lowerQuestion.includes('interview') || lowerQuestion.includes('recommend')) {
+        return `I recommend scheduling interviews with the top {{ 2 if results|length >= 2 else results|length }} candidates: <strong>Candidate #1</strong> ({{ results[0].match_score }}%){% if results|length > 1 %} and <strong>Candidate #2</strong> ({{ results[1].match_score }}%){% endif %}. They both meet the critical requirements and show strong potential.`;
+    }
+    
+    if (lowerQuestion.includes('experience')) {
+        return 'The candidates show a range of experience levels. The top candidate demonstrates relevant experience that aligns well with the job requirements. Would you like me to provide more details about specific experience areas?';
+    }
+    
+    if (lowerQuestion.includes('strength') || lowerQuestion.includes('advantage')) {
+        return `<strong>Candidate #1</strong>'s key strengths include: {% if results[0].matched_skills %}strong {{ results[0].matched_skills[0] }} skills{% endif %}, relevant industry experience, and a high overall match score of {{ results[0].match_score }}%.`;
+    }
+    
+    if (lowerQuestion.includes('weakness') || lowerQuestion.includes('concern') || lowerQuestion.includes('missing')) {
+        return 'Some areas for consideration: {% if results[0].missing_skills %}{{ results[0].missing_skills[:2]|join(" and ") }} skills could be developed{% else %}minor skill gaps that could be addressed through training{% endif %}. Overall, the candidates show strong potential.';
+    }
+    {% endif %}
+    
+    // Default response
+    return `I understand you're asking about: "<em>${question}</em>". This is a UI demonstration. In the production version, I would analyze the candidate data in real-time and provide detailed insights. <br><br>💡 <strong>Try asking:</strong> "Compare all candidates" or "Tell me about the top candidate"`;
+}
+
+const pageTranslations = {
+    en: {
+        resultsTitle: "Match Results Dashboard",
+        totalCandidates: "Total Candidates",
+        topMatch: "Top Match",
+        avgMatch: "Average Match",
+        candidateComparison: "Candidate Comparison",
+        exportPDF: "Export to PDF",
+        rematch: "Run New Match",
+        backJobs: "Back to Jobs",
+        aiAssistantBtn: "Ask AI About Results",
+        newBadge: "NEW",
+        topMatches: "Top Matched Candidates",
+        match: "Match",
+        viewResume: "View Resume",
+        resumeDetails: "Resume Details",
+        skillsBreakdown: "Skills Breakdown",
+        technicalSkills: "Technical Skills",
+        of: "of",
+        required: "required skills matched",
+        matchedSkills: "Matched Skills",
+        missingSkills: "Missing Skills",
+        requirementsMatch: "Requirements Match",
+        experienceReq: "Experience",
+        educationReq: "Education",
+        overallAnalysis: "Overall Analysis",
+        experience: "Experience",
+        education: "Education",
+        overall: "Overall",
+        selectDifferent: "Select Different Job",
+        addMore: "Add More Resumes",
+        viewFull: "View Full",
+        hide: "Hide",
+        close: "Close",
+        aiAssistant: "AI Assistant",
+        online: "Online",
+        chatWelcome: "Hi! I'm your AI assistant. I can help you analyze the",
+        chatWelcome2: "matched candidates. You can ask me questions like:",
+        chatQ1: "Which candidate has the best technical skills?",
+        chatQ2: "Compare the top 2 candidates",
+        chatQ3: "What are the strengths of candidate #1?",
+        justNow: "Just now",
+        suggestTop: "Tell me about the top candidate",
+        suggestCompare: "Compare all candidates",
+        suggestSkills: "What skills are missing?",
+        suggestInterview: "Who should I interview first?",
+        chatPlaceholder: "Ask me anything about these candidates...",
+        noResults: "No Results Yet",
+        noResultsDesc: "Select a job and match with resumes to see results.",
+        uploadResumes: "Upload Resumes",
+        addJobs: "Add Jobs"
+    },
+    ar: {
+        resultsTitle: "لوحة نتائج المطابقة",
+        totalCandidates: "إجمالي المرشحين",
+        topMatch: "أفضل مطابقة",
+        avgMatch: "متوسط المطابقة",
+        candidateComparison: "مقارنة المرشحين",
+        exportPDF: "تصدير PDF",
+        rematch: "مطابقة جديدة",
+        backJobs: "العودة للوظائف",
+        aiAssistantBtn: "اسأل الذكاء الاصطناعي",
+        newBadge: "جديد",
+        topMatches: "أفضل المرشحين المطابقين",
+        match: "تطابق",
+        viewResume: "عرض السيرة",
+        resumeDetails: "تفاصيل السيرة الذاتية",
+        skillsBreakdown: "تفصيل المهارات",
+        technicalSkills: "المهارات التقنية",
+        of: "من",
+        required: "مهارة مطلوبة مطابقة",
+        matchedSkills: "المهارات المطابقة",
+        missingSkills: "المهارات المفقودة",
+        requirementsMatch: "مطابقة المتطلبات",
+        experienceReq: "الخبرة",
+        educationReq: "التعليم",
+        overallAnalysis: "التحليل الشامل",
+        experience: "الخبرة",
+        education: "التعليم",
+        overall: "الإجمالي",
+        selectDifferent: "اختر وظيفة مختلفة",
+        addMore: "إضافة المزيد",
+        viewFull: "عرض الكل",
+        hide: "إخفاء",
+        close: "إغلاق",
+        aiAssistant: "المساعد الذكي",
+        online: "متصل",
+        chatWelcome: "مرحباً! أنا مساعدك الذكي. يمكنني مساعدتك في تحليل",
+        chatWelcome2: "المرشحين المطابقين. يمكنك طرح أسئلة مثل:",
+        chatQ1: "أي مرشح لديه أفضل المهارات التقنية؟",
+        chatQ2: "قارن بين أفضل مرشحين",
+        chatQ3: "ما هي نقاط قوة المرشح رقم 1؟",
+        justNow: "الآن",
+        suggestTop: "أخبرني عن أفضل مرشح",
+        suggestCompare: "قارن بين جميع المرشحين",
+        suggestSkills: "ما المهارات المفقودة؟",
+        suggestInterview: "من يجب أن أقابل أولاً؟",
+        chatPlaceholder: "اسألني أي شيء عن هؤلاء المرشحين...",
+        noResults: "لا توجد نتائج",
+        noResultsDesc: "اختر وظيفة وطابقها مع السير الذاتية.",
+        uploadResumes: "تحميل السير",
+        addJobs: "إضافة وظائف"
+    }
+};
+
+Object.assign(translations.en, pageTranslations.en);
+Object.assign(translations.ar, pageTranslations.ar);
+</script>
+{% endblock %}

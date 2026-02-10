@@ -1,0 +1,1209 @@
+{% extends "base.html" %}
+
+{% block title %}Help & Guide - Candidate Insights{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --help-primary: #872b97;
+        --help-primary-light: #a855f7;
+        --help-secondary: #2c5aa0;
+        --help-accent: #10b981;
+        --help-accent-dark: #059669;
+        --help-warning: #f59e0b;
+        --help-danger: #ef4444;
+    }
+    
+    /* Hero Section */
+    .help-hero {
+        background:linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        color: white;
+        padding: 5rem 2rem;
+        text-align: center;
+        border-radius: 1.5rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(135, 43, 151, 0.3);
+    }
+    
+    .help-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.4;
+    }
+    
+    .help-hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .help-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+        letter-spacing: -0.02em;
+    }
+    
+    .help-hero p {
+        font-size: 1.375rem;
+        opacity: 0.98;
+        max-width: 750px;
+        margin: 0 auto;
+        font-weight: 400;
+    }
+    
+    
+    /* Quick Links */
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    
+    .quick-link-card {
+        background: white;
+        border: none;
+        border-radius: 1.25rem;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .quick-link-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .quick-link-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(135, 43, 151, 0.25);
+    }
+    
+    .quick-link-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .quick-link-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2.5rem;
+        box-shadow: 0 10px 30px rgba(135, 43, 151, 0.35);
+        transition: all 0.3s ease;
+    }
+    
+    .quick-link-card:hover .quick-link-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 15px 40px rgba(135, 43, 151, 0.45);
+    }
+    
+    .quick-link-title {
+        font-size: 1.375rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.75rem;
+    }
+    
+    .quick-link-desc {
+        font-size: 1rem;
+        color: var(--gray-600);
+        font-weight: 500;
+    }
+    
+    /* Section Container */
+    .help-section {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 3rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        border: 1px solid rgba(0,0,0,0.04);
+    }
+    
+    .help-section-header {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid var(--gray-100);
+    }
+    
+    .help-section-icon {
+        width: 60px;
+        height: 60px;
+        background:linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.75rem;
+        box-shadow: 0 8px 20px rgba(135, 43, 151, 0.35);
+    }
+    
+    .help-section-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+    
+    /* Steps */
+    .help-steps {
+        counter-reset: step-counter;
+    }
+    
+    .help-step {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+    
+    .help-step::before {
+        content: '';
+        position: absolute;
+        left: 35px;
+        top: 80px;
+        bottom: -40px;
+        width: 3px;
+        background:linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        opacity: 0.25;
+    }
+    
+    .help-step:last-child::before {
+        display: none;
+    }
+    
+    .help-step-number {
+        counter-increment: step-counter;
+        width: 70px;
+        height: 70px;
+        background:linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 800;
+        flex-shrink: 0;
+        box-shadow: 0 10px 30px rgba(135, 43, 151, 0.4);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .help-step-number::before {
+        content: counter(step-counter);
+    }
+    
+    .help-step-content {
+        flex: 1;
+        padding-top: 0.75rem;
+    }
+    
+    .help-step-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.75rem;
+    }
+    
+    .help-step-desc {
+        color: var(--gray-700);
+        line-height: 1.8;
+        margin-bottom: 1.25rem;
+        font-size: 1.0625rem;
+    }
+    
+    .help-step-tip {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.12) 100%);
+        border-left: 4px solid #10b981;
+        padding: 1rem 1.25rem;
+        border-radius: 0.75rem;
+        font-size: 1rem;
+        color: var(--gray-800);
+        font-weight: 500;
+    }
+    
+    .help-step-tip strong {
+        color: #059669;
+        font-weight: 700;
+    }
+    
+    /* FAQ */
+    .faq-item {
+        border: 2px solid var(--gray-200);
+        border-radius: 1rem;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .faq-item:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        border-color: var(--help-primary);
+    }
+    
+    .faq-question {
+        padding: 1.5rem 2rem;
+        background: var(--gray-50);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+        transition: all 0.3s ease;
+    }
+    
+    .faq-item.active .faq-question {
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+    }
+    
+    .faq-question:hover {
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+    }
+    
+    .faq-question-text {
+        font-weight: 700;
+        color: var(--gray-900);
+        font-size: 1.125rem;
+    }
+    
+    .faq-icon {
+        color: var(--help-primary);
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+        font-weight: 700;
+    }
+    
+    .faq-item.active .faq-icon {
+        transform: rotate(180deg);
+    }
+    
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+        background: white;
+    }
+    
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+    }
+    
+    .faq-answer-content {
+        padding: 1.5rem 2rem;
+        color: var(--gray-700);
+        line-height: 1.8;
+        font-size: 1.0625rem;
+    }
+    
+    /* Feature Cards */
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .feature-card {
+        background: linear-gradient(135deg, #ffffff 0%, #faf9ff 100%);
+        border: 2px solid var(--gray-200);
+        border-radius: 1.25rem;
+        padding: 2rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(135, 43, 151, 0.2);
+        border-color: var(--help-primary);
+    }
+    
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 20px rgba(135, 43, 151, 0.35);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 12px 30px rgba(135, 43, 151, 0.45);
+    }
+    
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.75rem;
+    }
+    
+    .feature-desc {
+        color: var(--gray-700);
+        font-size: 1rem;
+        line-height: 1.7;
+        font-weight: 500;
+    }
+    
+    /* Tips Box */
+    .tips-box {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+        border-left: 5px solid #f59e0b;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-top: 2rem;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
+    }
+    
+    .tips-box-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tips-box-icon {
+        color: #f59e0b;
+        font-size: 2rem;
+    }
+    
+    .tips-box-title {
+        font-size: 1.375rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    
+    .tips-box ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .tips-box li {
+        padding: 0.75rem 0;
+        color: var(--gray-800);
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        font-size: 1.0625rem;
+        font-weight: 500;
+        line-height: 1.7;
+    }
+    
+    .tips-box li::before {
+        content: '💡';
+        flex-shrink: 0;
+        font-size: 1.25rem;
+    }
+    
+    /* Support Box */
+    .support-box {
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.95) 0%, rgba(44, 90, 160, 0.95) 100%);
+        color: white;
+        border-radius: 1.5rem;
+        padding: 3rem;
+        text-align: center;
+        margin-top: 4rem;
+        box-shadow: 0 20px 60px rgba(135, 43, 151, 0.35);
+    }
+    
+    .support-box h3 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        margin-bottom: 1.25rem;
+    }
+    
+    .support-box p {
+        font-size: 1.25rem;
+        opacity: 0.98;
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+    
+.support-box .btn {
+    background: white !important;
+    color: #872b97 !important;  
+    border: none;
+    padding: 1rem 3rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border-radius: 3rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.support-box .btn:hover {
+    background: #f9fafb !important; 
+    color: #872b97 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    text-decoration: none;
+}
+
+.support-box .btn i,
+.support-box .btn span {
+    color: #872b97 !important;
+}
+
+.support-box a.btn {
+    color: #872b97 !important;
+}
+
+.support-box a.btn:visited,
+.support-box a.btn:link,
+.support-box a.btn:active {
+    color: #872b97 !important;
+}
+
+    /* Scoring Example Box */
+    .scoring-example {
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+        border-left: 5px solid var(--help-primary);
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-top: 2rem;
+        box-shadow: 0 4px 15px rgba(135, 43, 151, 0.12);
+    }
+    
+    .scoring-example p {
+        margin-bottom: 1.25rem;
+        font-size: 1.0625rem;
+    }
+    
+    .scoring-example strong {
+        color: var(--help-primary);
+        font-weight: 700;
+    }
+    
+    .scoring-example ul {
+        color: var(--gray-800);
+        line-height: 2.2;
+        font-size: 1.0625rem;
+        font-weight: 500;
+    }
+    
+    .scoring-example ul li strong {
+        color: var(--gray-900);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .help-hero h1 {
+            font-size: 2.25rem;
+        }
+        
+        .help-hero p {
+            font-size: 1.125rem;
+        }
+        
+        .help-section {
+            padding: 2rem 1.5rem;
+        }
+        
+        .quick-links {
+            grid-template-columns: 1fr;
+        }
+        
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .help-step {
+            gap: 1.25rem;
+        }
+        
+        .help-step-number {
+            width: 55px;
+            height: 55px;
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="help-hero">
+    <div class="help-hero-content">
+        <h1 data-i18n="helpTitle">📚 Help & User Guide</h1>
+        <p data-i18n="helpSubtitle">Everything you need to know about Candidate Insight!</p>
+    </div>
+</div>
+
+<!-- Quick Links -->
+<div class="quick-links">
+    <div class="quick-link-card" onclick="scrollToSection('getting-started')">
+        <div class="quick-link-icon">
+            <i class="bi bi-rocket-takeoff"></i>
+        </div>
+        <div class="quick-link-title" data-i18n="quickGettingStarted">Getting Started</div>
+        <div class="quick-link-desc" data-i18n="quickGettingStartedDesc">Learn the basics</div>
+    </div>
+    
+    <div class="quick-link-card" onclick="scrollToSection('upload-resumes')">
+        <div class="quick-link-icon">
+            <i class="bi bi-file-earmark-arrow-up"></i>
+        </div>
+        <div class="quick-link-title" data-i18n="quickUploadResumes">Upload Resumes</div>
+        <div class="quick-link-desc" data-i18n="quickUploadResumesDesc">Upload guide</div>
+    </div>
+    
+    <div class="quick-link-card" onclick="scrollToSection('matching')">
+        <div class="quick-link-icon">
+            <i class="bi bi-bullseye"></i>
+        </div>
+        <div class="quick-link-title" data-i18n="quickMatching">Matching Process</div>
+        <div class="quick-link-desc" data-i18n="quickMatchingDesc">How AI works</div>
+    </div>
+    
+    <div class="quick-link-card" onclick="scrollToSection('features')">
+        <div class="quick-link-icon">
+            <i class="bi bi-stars"></i>
+        </div>
+        <div class="quick-link-title" data-i18n="quickAdvanced">Advanced Features</div>
+        <div class="quick-link-desc" data-i18n="quickAdvancedDesc">Explore features</div>
+    </div>
+
+    <div class="quick-link-card" onclick="scrollToSection('faq')">
+        <div class="quick-link-icon">
+            <i class="bi bi-question-circle"></i>
+        </div>
+        <div class="quick-link-title" data-i18n="quickFAQ">FAQ</div>
+        <div class="quick-link-desc" data-i18n="quickFAQDesc">Common questions</div>
+    </div>
+
+    <div class="quick-link-card" onclick="scrollToSection('contact-support')">
+        <div class="quick-link-icon">
+            <i class="bi bi-headset"></i>
+        </div>
+        <div class="quick-link-title" data-i18n="quickContact">Contact</div>
+        <div class="quick-link-desc" data-i18n="quickContactDesc">Get in touch</div>
+    </div>
+</div>
+
+<!-- Getting Started Section -->
+<div class="help-section" id="getting-started">
+    <div class="help-section-header">
+        <div class="help-section-icon">
+            <i class="bi bi-rocket-takeoff"></i>
+        </div>
+        <h2 class="help-section-title" data-i18n="gettingStartedTitle">Getting Started</h2>
+    </div>
+    
+    <div class="help-steps">
+        <div class="help-step">
+            <div class="help-step-number"></div>
+            <div class="help-step-content">
+                <h3 class="help-step-title" data-i18n="step1Title">Upload Resumes</h3>
+                <p class="help-step-desc" data-i18n="step1Desc">Navigate to the "Resumes" page and upload candidate CVs. The system accepts PDF files and supports both English and Arabic resumes.</p>
+                <div class="help-step-tip">
+                    <strong data-i18n="proTip">💡 Pro Tip:</strong> <span data-i18n="step1Tip">You can upload multiple resumes at once! The system will automatically parse and extract key information.</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="help-step">
+            <div class="help-step-number"></div>
+            <div class="help-step-content">
+                <h3 class="help-step-title" data-i18n="step2Title">Add Job Description</h3>
+                <p class="help-step-desc" data-i18n="step2Desc">Go to the "Jobs" page and either paste your job description or upload it as a PDF. Include all required skills, experience, and education requirements.</p>
+                <div class="help-step-tip">
+                    <strong data-i18n="proTip">💡 Pro Tip:</strong> <span data-i18n="step2Tip">Be specific about requirements! The more detailed your job description, the more accurate the matching results.</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="help-step">
+            <div class="help-step-number"></div>
+            <div class="help-step-content">
+                <h3 class="help-step-title" data-i18n="step3Title">Select Job & Match</h3>
+                <p class="help-step-desc" data-i18n="step3Desc">Click "Select" on your job posting, then click "Match Resumes" to start the AI-powered matching process.</p>
+                <div class="help-step-tip">
+                    <strong data-i18n="proTip">💡 Pro Tip:</strong> <span data-i18n="step3Tip">The matching process typically takes 5-10 seconds per resume. Sit back and let AI do the work!</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="help-step">
+            <div class="help-step-number"></div>
+            <div class="help-step-content">
+                <h3 class="help-step-title" data-i18n="step4Title">Review Results</h3>
+                <p class="help-step-desc" data-i18n="step4Desc">View comprehensive match results with scores, skills breakdown, and detailed analysis. Export to PDF for your records.</p>
+                <div class="help-step-tip">
+                    <strong data-i18n="proTip">💡 Pro Tip:</strong> <span data-i18n="step4Tip">Click "View Resume" to see full candidate details. Use the AI Assistant to ask questions about candidates!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Upload Resumes Section -->
+<div class="help-section" id="upload-resumes">
+    <div class="help-section-header">
+        <div class="help-section-icon">
+            <i class="bi bi-file-earmark-arrow-up"></i>
+        </div>
+        <h2 class="help-section-title" data-i18n="uploadResumesTitle">Uploading Resumes</h2>
+    </div>
+    
+    <h3 data-i18n="supportedFormats">Supported Formats</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-file-earmark-pdf"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="formatPDFTitle">PDF Documents</h4>
+            <p class="feature-desc" data-i18n="formatPDFDesc">Both digital and scanned PDFs are supported. Our OCR technology can extract text from image-based PDFs.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-translate"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="formatMultilingualTitle">Multilingual Support</h4>
+            <p class="feature-desc" data-i18n="formatMultilingualDesc">Upload resumes in English or Arabic. The system automatically translates and processes both languages.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-lightning-charge"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="formatBatchTitle">Batch Upload</h4>
+            <p class="feature-desc" data-i18n="formatBatchDesc">Upload multiple resumes at once (up to 16MB total). The system processes them automatically.</p>
+        </div>
+    </div>
+    
+    <div class="tips-box">
+        <div class="tips-box-header">
+            <i class="bi bi-lightbulb tips-box-icon"></i>
+            <h3 class="tips-box-title" data-i18n="bestPracticesTitle">Best Practices for Resume Upload</h3>
+        </div>
+        <ul>
+            <li data-i18n="tip1">Ensure PDFs are clear and readable - avoid heavily compressed or blurry scans</li>
+            <li data-i18n="tip2">Use standard resume formats with clear sections (Experience, Education, Skills)</li>
+            <li data-i18n="tip3">File names should be descriptive (e.g., "John_Doe_CV.pdf")</li>
+            <li data-i18n="tip4">Remove password protection from PDFs before uploading</li>
+            <li data-i18n="tip5">For best results, upload resumes that are 1-3 pages long</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Matching Process Section -->
+<div class="help-section" id="matching">
+    <div class="help-section-header">
+        <div class="help-section-icon">
+            <i class="bi bi-bullseye"></i>
+        </div>
+        <h2 class="help-section-title" data-i18n="matchingProcessTitle">How AI Matching Works</h2>
+    </div>
+    
+    <p data-i18n="matchingIntro" style="font-size: 1.125rem; color: var(--gray-700); margin-bottom: 2rem;">
+        Our AI-powered matching system uses advanced natural language processing to evaluate candidates against job requirements. Here's how it works:
+    </p>
+    
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="matchingSkillsTitle">Skills Matching (40%)</h4>
+            <p class="feature-desc" data-i18n="matchingSkillsDesc">AI extracts required skills from job description and compares them with candidate's skills. Score = (Matched Skills / Total Required) × 40</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-briefcase"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="matchingExpTitle">Experience (35%)</h4>
+            <p class="feature-desc" data-i18n="matchingExpDesc">Evaluates years of relevant experience. Candidates exceeding requirements score higher (up to 35 points).</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-mortarboard"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="matchingEduTitle">Education (25%)</h4>
+            <p class="feature-desc" data-i18n="matchingEduDesc">Compares candidate's education level with job requirements. Matching or exceeding requirements earns full 25 points.</p>
+        </div>
+    </div>
+    
+    <h3 data-i18n="scoringExampleTitle" style="margin-top: 2rem; margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 700;">Scoring Example</h3>
+    <div class="scoring-example">
+        <p style="margin-bottom: 1.5rem;"><strong data-i18n="exampleCandidate" style="font-size: 1.125rem;">Example Candidate:</strong></p>
+        <ul style="color: var(--gray-800); line-height: 2.2; font-weight: 500;">
+            <li data-i18n="exampleSkills"><strong>Skills:</strong> 8 out of 10 required = 32 points (8/10 × 40)</li>
+            <li data-i18n="exampleExp"><strong>Experience:</strong> 5 years (requirement: 3+ years) = 35 points (exceeds)</li>
+            <li data-i18n="exampleEdu"><strong>Education:</strong> Bachelor's degree (matches requirement) = 25 points</li>
+        </ul>
+        <p style="margin-top: 1.5rem; font-size: 1.25rem;"><strong data-i18n="exampleTotal" style="color: var(--help-primary); font-weight: 700;">Total Score: 32 + 35 + 25 = 92%</strong> ✅</p>
+    </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="help-section" id="faq">
+    <div class="help-section-header">
+        <div class="help-section-icon">
+            <i class="bi bi-question-circle"></i>
+        </div>
+        <h2 class="help-section-title" data-i18n="faqTitle">Frequently Asked Questions</h2>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq1Q">How many resumes can I upload at once?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq1A">
+                You can upload multiple resumes at once with a total file size limit of 16MB. There's no strict limit on the number of files, but we recommend uploading in batches of 10-20 for optimal performance.
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq2Q">Can I upload scanned PDFs?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq2A">
+                Yes! Our system uses OCR (Optical Character Recognition) technology to extract text from scanned PDFs. Make sure the scans are clear and readable for best results.
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq3Q">How accurate is the AI matching?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq3A">
+                Our AI matching system is highly accurate, using GPT-4o-mini with advanced prompt engineering techniques. The system provides detailed score breakdowns and confidence levels for transparency. We recommend reviewing the AI's analysis and using it as a decision-support tool.
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq4Q">What languages are supported?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq4A">
+                The system currently supports English and Arabic resumes. Arabic content is automatically translated and transliterated to English for consistent processing and matching.
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq5Q">Can I export the matching results?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq5A">
+                Yes! Click the "Export to PDF" button on the Results page to download a comprehensive report with all candidate scores, skills breakdown, and analysis.
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq6Q">How is my data protected?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq6A">
+                We take privacy seriously. Personal information (names, emails, phone numbers) is automatically blurred in the interface. All data is processed securely, and we use encrypted connections to OpenAI's API.
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq7Q">What if the system rejects my resume?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq7A">
+                The system validates uploaded files to ensure they are actual CVs/resumes. If a file is rejected, it may not contain enough CV-related keywords (experience, education, skills). Ensure you're uploading resume documents and not invoices, reports, or other file types.
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+            <span class="faq-question-text" data-i18n="faq8Q">How long does matching take?</span>
+            <i class="bi bi-chevron-down faq-icon"></i>
+        </div>
+        <div class="faq-answer">
+            <div class="faq-answer-content" data-i18n="faq8A">
+                The matching process typically takes 5-10 seconds per resume. For 10 resumes, expect around 1-2 minutes. The system processes candidates sequentially for maximum accuracy.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="help-section" id="features">
+    <div class="help-section-header">
+        <div class="help-section-icon">
+            <i class="bi bi-stars"></i>
+        </div>
+        <h2 class="help-section-title" data-i18n="featuresTitle">Advanced Features</h2>
+    </div>
+    
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="featurePIITitle">Privacy Masking</h4>
+            <p class="feature-desc" data-i18n="featurePIIDesc">Automatically blurs sensitive information (names, emails, phone numbers) to protect candidate privacy.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="featureChartsTitle">Data Visualization</h4>
+            <p class="feature-desc" data-i18n="featureChartsDesc">Interactive charts and graphs show candidate comparisons, skills breakdown, and match scores at a glance.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-robot"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="featureAITitle">AI Assistant (Coming Soon)</h4>
+            <p class="feature-desc" data-i18n="featureAIDesc">Ask questions about candidates, get recommendations, and receive intelligent insights through our AI chatbot.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-file-earmark-pdf"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="featurePDFTitle">PDF Export</h4>
+            <p class="feature-desc" data-i18n="featurePDFDesc">Export comprehensive match reports as PDF files for sharing with your team or keeping records.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-calculator"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="featureTransparentTitle">Transparent Scoring</h4>
+            <p class="feature-desc" data-i18n="featureTransparentDesc">See exactly how scores are calculated with detailed breakdowns (skills, experience, education).</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+            <h4 class="feature-title" data-i18n="featureRematchTitle">Re-matching</h4>
+            <p class="feature-desc" data-i18n="featureRematchDesc">Run matching multiple times with different job descriptions or updated resumes without re-uploading.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Support Section -->
+<div class="support-box">
+    <h3 data-i18n="supportTitle">Need More Help?</h3>
+    <p data-i18n="supportDesc">Can't find what you're looking for? Our support team is here to help!</p>
+    <a href="{{ url_for('index') }}" class="btn btn-lg">
+        <i class="bi bi-house-door me-2"></i>
+        <span data-i18n="backHome">Back to Home</span>
+    </a>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// FAQ Toggle
+function toggleFAQ(element) {
+    const faqItem = element.closest('.faq-item');
+    const allFAQs = document.querySelectorAll('.faq-item');
+    
+    // Close all other FAQs
+    allFAQs.forEach(item => {
+        if (item !== faqItem) {
+            item.classList.remove('active');
+        }
+    });
+    
+    // Toggle current FAQ
+    faqItem.classList.toggle('active');
+}
+
+// Scroll to Section
+function scrollToSection(sectionId) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Translations
+const helpTranslations = {
+    en: {
+        helpTitle: "📚 Help & User Guide",
+        helpSubtitle: "Everything you need to know about Candidate Insights!",
+        quickGettingStarted: "Getting Started",
+        quickGettingStartedDesc: "Learn the basics",
+        quickUploadResumes: "Upload Resumes",
+        quickUploadResumesDesc: "Upload guide",
+        quickMatching: "Matching Process",
+        quickMatchingDesc: "How AI works",
+        quickFAQ: "FAQ",
+        quickFAQDesc: "Common questions",
+        quickAdvanced: "Advanced Features",
+        quickAdvancedDesc: "Explore features",
+        gettingStartedTitle: "Getting Started",
+        step1Title: "Upload Resumes",
+        step1Desc: "Navigate to the 'Resumes' page and upload candidate CVs. The system accepts PDF files and supports both English and Arabic resumes.",
+        proTip: "💡 Pro Tip:",
+        step1Tip: "You can upload multiple resumes at once! The system will automatically parse and extract key information.",
+        step2Title: "Add Job Description",
+        step2Desc: "Go to the 'Jobs' page and either paste your job description or upload it as a PDF. Include all required skills, experience, and education requirements.",
+        step2Tip: "Be specific about requirements! The more detailed your job description, the more accurate the matching results.",
+        step3Title: "Select Job & Match",
+        step3Desc: "Click 'Select' on your job posting, then click 'Match Resumes' to start the AI-powered matching process.",
+        step3Tip: "The matching process typically takes 5-10 seconds per resume. Sit back and let AI do the work!",
+        step4Title: "Review Results",
+        step4Desc: "View comprehensive match results with scores, skills breakdown, and detailed analysis. Export to PDF for your records.",
+        step4Tip: "Click 'View Resume' to see full candidate details. Use the AI Assistant to ask questions about candidates!",
+        uploadResumesTitle: "Uploading Resumes",
+        supportedFormats: "Supported Formats",
+        formatPDFTitle: "PDF Documents",
+        formatPDFDesc: "Both digital and scanned PDFs are supported. Our OCR technology can extract text from image-based PDFs.",
+        formatMultilingualTitle: "Multilingual Support",
+        formatMultilingualDesc: "Upload resumes in English or Arabic. The system automatically translates and processes both languages.",
+        formatBatchTitle: "Batch Upload",
+        formatBatchDesc: "Upload multiple resumes at once (up to 16MB total). The system processes them automatically.",
+        bestPracticesTitle: "Best Practices for Resume Upload",
+        tip1: "Ensure PDFs are clear and readable - avoid heavily compressed or blurry scans",
+        tip2: "Use standard resume formats with clear sections (Experience, Education, Skills)",
+        tip3: "File names should be descriptive (e.g., 'John_Doe_CV.pdf')",
+        tip4: "Remove password protection from PDFs before uploading",
+        tip5: "For best results, upload resumes that are 1-3 pages long",
+        matchingProcessTitle: "How AI Matching Works",
+        matchingIntro: "Our AI-powered matching system uses advanced natural language processing to evaluate candidates against job requirements. Here's how it works:",
+        matchingSkillsTitle: "Skills Matching (40%)",
+        matchingSkillsDesc: "AI extracts required skills from job description and compares them with candidate's skills. Score = (Matched Skills / Total Required) × 40",
+        matchingExpTitle: "Experience (35%)",
+        matchingExpDesc: "Evaluates years of relevant experience. Candidates exceeding requirements score higher (up to 35 points).",
+        matchingEduTitle: "Education (25%)",
+        matchingEduDesc: "Compares candidate's education level with job requirements. Matching or exceeding requirements earns full 25 points.",
+        scoringExampleTitle: "Scoring Example",
+        exampleCandidate: "Example Candidate:",
+        exampleSkills: "Skills: 8 out of 10 required = 32 points (8/10 × 40)",
+        exampleExp: "Experience: 5 years (requirement: 3+ years) = 35 points (exceeds)",
+        exampleEdu: "Education: Bachelor's degree (matches requirement) = 25 points",
+        exampleTotal: "Total Score: 32 + 35 + 25 = 92%",
+        faqTitle: "Frequently Asked Questions",
+        faq1Q: "How many resumes can I upload at once?",
+        faq1A: "You can upload multiple resumes at once with a total file size limit of 16MB. There's no strict limit on the number of files, but we recommend uploading in batches of 10-20 for optimal performance.",
+        faq2Q: "Can I upload scanned PDFs?",
+        faq2A: "Yes! Our system uses OCR (Optical Character Recognition) technology to extract text from scanned PDFs. Make sure the scans are clear and readable for best results.",
+        faq3Q: "How accurate is the AI matching?",
+        faq3A: "Our AI matching system is highly accurate, using GPT-4o-mini with advanced prompt engineering techniques. The system provides detailed score breakdowns and confidence levels for transparency. We recommend reviewing the AI's analysis and using it as a decision-support tool.",
+        faq4Q: "What languages are supported?",
+        faq4A: "The system currently supports English and Arabic resumes. Arabic content is automatically translated and transliterated to English for consistent processing and matching.",
+        faq5Q: "Can I export the matching results?",
+        faq5A: "Yes! Click the 'Export to PDF' button on the Results page to download a comprehensive report with all candidate scores, skills breakdown, and analysis.",
+        faq6Q: "How is my data protected?",
+        faq6A: "We take privacy seriously. Personal information (names, emails, phone numbers) is automatically blurred in the interface. All data is processed securely, and we use encrypted connections to OpenAI's API.",
+        faq7Q: "What if the system rejects my resume?",
+        faq7A: "The system validates uploaded files to ensure they are actual CVs/resumes. If a file is rejected, it may not contain enough CV-related keywords (experience, education, skills). Ensure you're uploading resume documents and not invoices, reports, or other file types.",
+        faq8Q: "How long does matching take?",
+        faq8A: "The matching process typically takes 5-10 seconds per resume. For 10 resumes, expect around 1-2 minutes. The system processes candidates sequentially for maximum accuracy.",
+        featuresTitle: "Advanced Features",
+        featurePIITitle: "Privacy Masking",
+        featurePIIDesc: "Automatically blurs sensitive information (names, emails, phone numbers) to protect candidate privacy.",
+        featureChartsTitle: "Data Visualization",
+        featureChartsDesc: "Interactive charts and graphs show candidate comparisons, skills breakdown, and match scores at a glance.",
+        featureAITitle: "AI Assistant (Coming Soon)",
+        featureAIDesc: "Ask questions about candidates, get recommendations, and receive intelligent insights through our AI chatbot.",
+        featurePDFTitle: "PDF Export",
+        featurePDFDesc: "Export comprehensive match reports as PDF files for sharing with your team or keeping records.",
+        featureTransparentTitle: "Transparent Scoring",
+        featureTransparentDesc: "See exactly how scores are calculated with detailed breakdowns (skills, experience, education).",
+        featureRematchTitle: "Re-matching",
+        featureRematchDesc: "Run matching multiple times with different job descriptions or updated resumes without re-uploading.",
+        supportTitle: "Need More Help?",
+        supportDesc: "Can't find what you're looking for? Our support team is here to help!",
+        backHome: "Back to Home"
+    },
+    ar: {
+        helpTitle: "📚 المساعدة ودليل المستخدم",
+        helpSubtitle: "كل ما تحتاج معرفته عن Candidate Insights!",
+        quickGettingStarted: "البدء",
+        quickGettingStartedDesc: "تعلم الأساسيات",
+        quickUploadResumes: "رفع السير الذاتية",
+        quickUploadResumesDesc: "دليل الرفع",
+        quickMatching: "عملية المطابقة",
+        quickMatchingDesc: "كيف يعمل الذكاء",
+        quickFAQ: "الأسئلة الشائعة",
+        quickFAQDesc: "أسئلة شائعة",
+        quickAdvanced: "الميزات المتقدمة",
+        quickAdvancedDesc: "استكشف الميزات",
+        gettingStartedTitle: "البدء",
+        step1Title: "رفع السير الذاتية",
+        step1Desc: "انتقل إلى صفحة 'السير الذاتية' وارفع سير المرشحين. النظام يقبل ملفات PDF ويدعم السير باللغتين الإنجليزية والعربية.",
+        proTip: "💡 نصيحة محترف:",
+        step1Tip: "يمكنك رفع عدة سير ذاتية دفعة واحدة! النظام سيقوم تلقائياً بتحليل واستخراج المعلومات الرئيسية.",
+        step2Title: "إضافة وصف الوظيفة",
+        step2Desc: "انتقل إلى صفحة 'الوظائف' والصق وصف الوظيفة أو ارفعه كملف PDF. قم بتضمين جميع المهارات والخبرة والمؤهلات التعليمية المطلوبة.",
+        step2Tip: "كن محدداً في المتطلبات! كلما كان وصف الوظيفة أكثر تفصيلاً، كانت نتائج المطابقة أدق.",
+        step3Title: "اختيار الوظيفة والمطابقة",
+        step3Desc: "انقر 'اختيار' على إعلان الوظيفة، ثم انقر 'مطابقة السير' لبدء عملية المطابقة بالذكاء الاصطناعي.",
+        step3Tip: "عملية المطابقة تستغرق عادة 5-10 ثوانٍ لكل سيرة. اجلس ودع الذكاء الاصطناعي يقوم بالعمل!",
+        step4Title: "مراجعة النتائج",
+        step4Desc: "عرض نتائج المطابقة الشاملة مع الدرجات، تفصيل المهارات، والتحليل التفصيلي. تصدير إلى PDF للحفظ.",
+        step4Tip: "انقر 'عرض السيرة' لرؤية تفاصيل المرشح الكاملة. استخدم المساعد الذكي لطرح أسئلة عن المرشحين!",
+        uploadResumesTitle: "رفع السير الذاتية",
+        supportedFormats: "التنسيقات المدعومة",
+        formatPDFTitle: "مستندات PDF",
+        formatPDFDesc: "يتم دعم ملفات PDF الرقمية والممسوحة ضوئياً. تقنية OCR لدينا يمكنها استخراج النص من ملفات PDF المصورة.",
+        formatMultilingualTitle: "دعم متعدد اللغات",
+        formatMultilingualDesc: "ارفع السير باللغة الإنجليزية أو العربية. النظام يترجم ويعالج اللغتين تلقائياً.",
+        formatBatchTitle: "الرفع الجماعي",
+        formatBatchDesc: "ارفع عدة سير ذاتية دفعة واحدة (حتى 16 ميجابايت إجمالي). النظام يعالجها تلقائياً.",
+        bestPracticesTitle: "أفضل الممارسات لرفع السير الذاتية",
+        tip1: "تأكد من أن ملفات PDF واضحة وقابلة للقراءة - تجنب المسح الضوئي المضغوط أو الضبابي",
+        tip2: "استخدم تنسيقات سير ذاتية قياسية مع أقسام واضحة (الخبرة، التعليم، المهارات)",
+        tip3: "يجب أن تكون أسماء الملفات وصفية (مثل 'Ahmed_Ali_CV.pdf')",
+        tip4: "قم بإزالة حماية كلمة المرور من ملفات PDF قبل الرفع",
+        tip5: "للحصول على أفضل النتائج، ارفع سيراً ذاتية من 1-3 صفحات",
+        matchingProcessTitle: "كيف تعمل المطابقة بالذكاء الاصطناعي",
+        matchingIntro: "نظام المطابقة بالذكاء الاصطناعي يستخدم معالجة اللغة الطبيعية المتقدمة لتقييم المرشحين مقابل متطلبات الوظيفة. إليك كيفية عمله:",
+        matchingSkillsTitle: "مطابقة المهارات (40%)",
+        matchingSkillsDesc: "الذكاء الاصطناعي يستخرج المهارات المطلوبة من وصف الوظيفة ويقارنها بمهارات المرشح. الدرجة = (المهارات المطابقة / المطلوب الكلي) × 40",
+        matchingExpTitle: "الخبرة (35%)",
+        matchingExpDesc: "يقيّم سنوات الخبرة ذات الصلة. المرشحون الذين يتجاوزون المتطلبات يحصلون على درجات أعلى (حتى 35 نقطة).",
+        matchingEduTitle: "التعليم (25%)",
+        matchingEduDesc: "يقارن مستوى تعليم المرشح مع متطلبات الوظيفة. المطابقة أو التجاوز يمنح 25 نقطة كاملة.",
+        scoringExampleTitle: "مثال على التسجيل",
+        exampleCandidate: "مرشح مثالي:",
+        exampleSkills: "المهارات: 8 من 10 مطلوبة = 32 نقطة (8/10 × 40)",
+        exampleExp: "الخبرة: 5 سنوات (المطلوب: 3+ سنوات) = 35 نقطة (يتجاوز)",
+        exampleEdu: "التعليم: درجة البكالوريوس (تطابق المتطلب) = 25 نقطة",
+        exampleTotal: "الدرجة الإجمالية: 32 + 35 + 25 = 92%",
+        faqTitle: "الأسئلة الشائعة",
+        faq1Q: "كم عدد السير التي يمكنني رفعها مرة واحدة؟",
+        faq1A: "يمكنك رفع عدة سير ذاتية مرة واحدة بحد أقصى 16 ميجابايت للحجم الإجمالي. لا يوجد حد صارم لعدد الملفات، لكننا نوصي بالرفع على دفعات من 10-20 للأداء الأمثل.",
+        faq2Q: "هل يمكنني رفع ملفات PDF ممسوحة ضوئياً؟",
+        faq2A: "نعم! نظامنا يستخدم تقنية OCR لاستخراج النص من ملفات PDF الممسوحة ضوئياً. تأكد من أن المسح واضح وقابل للقراءة للحصول على أفضل النتائج.",
+        faq3Q: "ما مدى دقة المطابقة بالذكاء الاصطناعي؟",
+        faq3A: "نظام المطابقة بالذكاء الاصطناعي دقيق للغاية، يستخدم GPT-4o-mini مع تقنيات هندسة التلقين المتقدمة. النظام يوفر تفاصيل الدرجات ومستويات الثقة للشفافية. نوصي بمراجعة تحليل الذكاء الاصطناعي واستخدامه كأداة دعم قرار.",
+        faq4Q: "ما هي اللغات المدعومة؟",
+        faq4A: "النظام يدعم حالياً السير الذاتية باللغتين الإنجليزية والعربية. المحتوى العربي يُترجم تلقائياً للإنجليزية للمعالجة والمطابقة المتسقة.",
+        faq5Q: "هل يمكنني تصدير نتائج المطابقة؟",
+        faq5A: "نعم! انقر زر 'تصدير إلى PDF' في صفحة النتائج لتنزيل تقرير شامل مع جميع درجات المرشحين وتفصيل المهارات والتحليل.",
+        faq6Q: "كيف يتم حماية بياناتي؟",
+        faq6A: "نحن نأخذ الخصوصية على محمل الجد. المعلومات الشخصية (الأسماء، البريد الإلكتروني، أرقام الهاتف) تُطمس تلقائياً في الواجهة. جميع البيانات تُعالج بشكل آمن، ونستخدم اتصالات مشفرة مع API الخاص بـ OpenAI.",
+        faq7Q: "ماذا لو رفض النظام سيرتي الذاتية؟",
+        faq7A: "النظام يتحقق من الملفات المرفوعة للتأكد من أنها سير ذاتية فعلية. إذا تم رفض ملف، قد لا يحتوي على كلمات مفتاحية كافية متعلقة بالسيرة الذاتية (خبرة، تعليم، مهارات). تأكد من أنك ترفع مستندات سير ذاتية وليس فواتير أو تقارير أو أنواع ملفات أخرى.",
+        faq8Q: "كم من الوقت تستغرق المطابقة؟",
+        faq8A: "عملية المطابقة تستغرق عادة 5-10 ثوانٍ لكل سيرة. لـ 10 سير، توقع حوالي 1-2 دقيقة. النظام يعالج المرشحين بالتسلسل لأقصى دقة.",
+        featuresTitle: "الميزات المتقدمة",
+        featurePIITitle: "إخفاء الخصوصية",
+        featurePIIDesc: "يطمس تلقائياً المعلومات الحساسة (الأسماء، البريد الإلكتروني، أرقام الهاتف) لحماية خصوصية المرشح.",
+        featureChartsTitle: "تصور البيانات",
+        featureChartsDesc: "الرسوم البيانية التفاعلية تظهر مقارنات المرشحين، تفصيل المهارات، ودرجات المطابقة بنظرة سريعة.",
+        featureAITitle: "المساعد الذكي (قريباً)",
+        featureAIDesc: "اطرح أسئلة عن المرشحين، احصل على توصيات، واستقبل رؤى ذكية من خلال برنامج الدردشة الذكي.",
+        featurePDFTitle: "تصدير PDF",
+        featurePDFDesc: "صدّر تقارير المطابقة الشاملة كملفات PDF للمشاركة مع فريقك أو الاحتفاظ بالسجلات.",
+        featureTransparentTitle: "تسجيل شفاف",
+        featureTransparentDesc: "شاهد بالضبط كيف يتم حساب الدرجات مع تفاصيل (المهارات، الخبرة، التعليم).",
+        featureRematchTitle: "إعادة المطابقة",
+        featureRematchDesc: "قم بتشغيل المطابقة عدة مرات مع وصف وظيفة مختلف أو سير محدثة دون إعادة الرفع.",
+        supportTitle: "هل تحتاج إلى مزيد من المساعدة؟",
+        supportDesc: "لا تجد ما تبحث عنه؟ فريق الدعم لدينا هنا للمساعدة!",
+        backHome: "العودة للرئيسية"
+    }
+};
+
+// Merge with global translations from base.html
+if (typeof translations !== 'undefined') {
+    Object.assign(translations.en, helpTranslations.en);
+    Object.assign(translations.ar, helpTranslations.ar);
+}
+
+// Apply translations on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const currentLang = localStorage.getItem('preferredLanguage') || 'en';
+    const currentTranslations = currentLang === 'ar' ? helpTranslations.ar : helpTranslations.en;
+    
+    // Apply all translations
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (currentTranslations[key]) {
+            element.textContent = currentTranslations[key];
+        }
+    });
+    
+    // Apply RTL if Arabic
+    if (currentLang === 'ar') {
+        document.body.dir = 'rtl';
+        document.documentElement.lang = 'ar';
+    }
+});
+</script>
+{% endblock %}

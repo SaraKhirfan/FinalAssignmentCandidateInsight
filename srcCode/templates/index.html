@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+        }
+        
+        /* SPLASH SCREEN */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-image: url('/static/images/background.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        #splashScreen.fade-out {
+            animation: fadeOut 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .splash-logo {
+            max-width: 600px;
+            width: 80%;
+            margin-bottom: 30px;
+            animation: logoFadeIn 1s ease-out 0.3s both;
+        }
+        
+        @keyframes logoFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .splash-tagline {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 40px;
+            animation: taglineFadeIn 1s ease-out 0.6s both;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            padding: 0 20px;
+        }
+        
+        @keyframes taglineFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .splash-loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite, loaderFadeIn 1s ease-out 0.9s both;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes loaderFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+    <img src="/static/images/logo.png" alt="Candidate Insights Logo" class="splash-logo">
+    <p class="splash-tagline">Explainable AI-Based Resume Parsing and Job Matching</p>
+    <div class="splash-loader"></div>
+</div>
+
+<script>
+// SPLASH SCREEN LOGIC - Redirect to /resumes after 3 seconds
+window.addEventListener('load', function() {
+    const splashScreen = document.getElementById('splashScreen');
+    
+    setTimeout(function() {
+        splashScreen.classList.add('fade-out');
+        setTimeout(function() {
+            // Redirect to resumes page
+            window.location.href = '/resumes';
+        }, 800);
+    }, 3000); // 3 seconds splash screen
+});
+</script>
+</body>
+</html>

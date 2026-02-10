@@ -1,0 +1,663 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs - Candidate Insights{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.08) 0%, rgba(44, 90, 160, 0.08) 100%);
+        border-radius: 1rem;
+        border: 1px solid rgba(135, 43, 151, 0.1);
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, white 0%, #faf9ff 100%);
+        border: 1px solid var(--gray-200);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+    
+    .stat-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-4px);
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+    }
+    
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+    
+    .stat-label {
+        color: var(--gray-500);
+        font-size: 0.8125rem;
+        margin-top: 0.375rem;
+    }
+    
+    .toolbar {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.25rem;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .job-list {
+        background: linear-gradient(135deg, white 0%, #fafbff 100%);
+        border: 1px solid var(--gray-200);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .job-list-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 1rem;
+    }
+    
+    .job-item {
+        padding: 1.25rem;
+        border: 2px solid var(--gray-200);
+        border-radius: 0.75rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        background: linear-gradient(135deg, white 0%, #fcfcfd 100%);
+    }
+    
+    .job-item:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-md);
+        transform: translateX(4px);
+    }
+    
+    .job-item.selected {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.05) 0%, rgba(44, 90, 160, 0.05) 100%);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .job-item.selected::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: 1rem 0 0 1rem;
+    }
+    
+    .job-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .job-radio {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: var(--primary);
+    }
+    
+    .job-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        flex: 1;
+    }
+    
+    .job-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border: 2px dashed var(--gray-300);
+        border-radius: 1rem;
+    }
+    
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, rgba(135, 43, 151, 0.1) 0%, rgba(44, 90, 160, 0.1) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: var(--primary);
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.75rem;
+    }
+    
+    .empty-description {
+        color: var(--gray-500);
+        margin-bottom: 2rem;
+    }
+    
+    .modal-content {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid var(--gray-200);
+        padding: 1.5rem;
+    }
+    
+    .modal-title {
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid var(--gray-200);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(135, 43, 151, 0.1);
+    }
+    
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .toolbar {
+            flex-direction: column;
+        }
+        
+        .sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 0;
+            padding: 1rem;
+        }
+        
+        .sticky-footer > div {
+            flex-direction: column;
+        }
+        
+        .sticky-footer .btn {
+            width: 100%;
+        }
+        
+        .job-list {
+            margin-bottom: 6rem;
+        }
+    }
+    
+    .sticky-footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid var(--gray-200);
+        padding: 1.25rem;
+        margin: 2rem -2rem -2.5rem -2rem;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sticky-footer .btn {
+        box-shadow: 0 4px 12px rgba(135, 43, 151, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title" data-i18n="jobsTitle">Job Management</h1>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addJobModal">
+        <i class="bi bi-plus-circle"></i>
+        <span data-i18n="addJob">Add Job Description</span>
+    </button>
+    {% if jobs %}
+    <button class="btn btn-outline-danger" onclick="deleteAllJobs()">
+        <i class="bi bi-trash"></i>
+        <span data-i18n="deleteAll">Delete All</span>
+    </button>
+    {% endif %}
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="bi bi-briefcase"></i>
+        </div>
+        <div class="stat-value">{{ jobs|length }}</div>
+        <div class="stat-label" data-i18n="totalJobs">Total Jobs</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="bi bi-file-earmark-person"></i>
+        </div>
+        <div class="stat-value">{{ resume_count }}</div>
+        <div class="stat-label" data-i18n="resumesReady">Resumes Ready</div>
+    </div>
+</div>
+
+
+<!-- JOB LIST -->
+{% if jobs %}
+<div class="job-list">
+    <h5 class="job-list-title" data-i18n="selectJob">Select a Job to Match:</h5>
+    
+    {% for job in jobs %}
+    <div class="job-item {% if job.selected %}selected{% endif %}" onclick="selectJobItem('{{ job.id }}')">
+        <div class="job-header">
+            <input type="radio" name="selectedJob" class="job-radio" id="job_{{ job.id }}" {% if job.selected %}checked{% endif %}>
+            <div class="job-title">{{ job.title }}</div>
+            <div class="job-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); viewJob('{{ job.id }}')">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteJob('{{ job.id }}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        </div>
+        <div class="job-preview">
+            {{ job.description[:200] }}{% if job.description|length > 200 %}...{% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ACTION BUTTONS -->
+<div class="sticky-footer">
+    <div style="display: flex; justify-content: space-between; gap: 1rem;">
+        <a href="{{ url_for('resumes_page') }}" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-arrow-left"></i>
+            <span data-i18n="backResumes">Back to Resumes</span>
+        </a>
+        
+        <button class="btn btn-primary btn-lg" id="matchButton" onclick="matchJobs()" {% if not selected_job %}disabled{% endif %}>
+            <i class="bi bi-stars"></i>
+            <span data-i18n="matchNow">Match & View Results</span>
+        </button>
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">
+        <i class="bi bi-briefcase"></i>
+    </div>
+    <h3 class="empty-title" data-i18n="noJobs">No Job Descriptions Yet</h3>
+    <p class="empty-description" data-i18n="noJobsDesc">Add job descriptions to match with your uploaded resumes.</p>
+    <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addJobModal">
+        <i class="bi bi-plus-circle"></i>
+        <span data-i18n="addFirstJob">Add Your First Job</span>
+    </button>
+</div>
+{% endif %}
+
+<!-- ADD JOB MODAL -->
+<div class="modal fade" id="addJobModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-i18n="addJobTitle">Add Job Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('add_job') }}" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="jobTitleLabel">Job Title:</label>
+                        <input type="text" name="job_title" class="form-control" placeholder="e.g., Software Engineer" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="jobDescLabel">Job Description:</label>
+                        <textarea name="job_description" class="form-control" rows="8" placeholder="Enter requirements, skills, experience..." id="jobDescText"></textarea>
+                    </div>
+                    <div class="text-center my-3">
+                        <span class="text-muted" data-i18n="or">OR</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-i18n="uploadPDF">Upload PDF:</label>
+                        <input type="file" name="job_file" class="form-control" accept=".pdf">
+                        <small class="text-muted" data-i18n="fileNote">File upload takes priority if both provided</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="addJob">Add Job</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW JOB MODAL -->
+<div class="modal fade" id="viewJobModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewJobTitle">Job Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <pre id="viewJobContent" style="white-space: pre-wrap; font-family: inherit; max-height: 500px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 1rem; border: none; overflow: hidden;">
+            <div class="modal-header" style="background: white; border-bottom: 1px solid var(--gray-200);">
+                <h5 class="modal-title" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700;">
+                    <i class="bi bi-exclamation-circle" style="color: var(--gray-600); font-size: 1.5rem;"></i>
+                    <span data-i18n="confirmDelete">Confirm Delete</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <p style="font-size: 1.125rem; margin-bottom: 1rem; color: var(--gray-700);" data-i18n="deleteQuestion">Are you sure you want to delete this job?</p>
+                <div style="background: linear-gradient(135deg, rgba(135, 43, 151, 0.05) 0%, rgba(44, 90, 160, 0.05) 100%); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem; border-left: 4px solid var(--primary);">
+                    <p class="fw-bold mb-0" id="deleteItemName" style="color: var(--gray-900);"></p>
+                </div>
+                <p class="mb-0" style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600);">
+                    <i class="bi bi-info-circle"></i>
+                    <span data-i18n="cannotUndo">This action cannot be undone.</span>
+                </p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--gray-200); padding: 1.5rem;">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i>
+                    <span data-i18n="cancelBtn">Cancel</span>
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="bi bi-trash-fill"></i>
+                    <span data-i18n="deleteBtn">Delete Permanently</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE ALL CONFIRMATION MODAL -->
+<div class="modal fade" id="deleteAllModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 1rem; border: none; overflow: hidden;">
+            <div class="modal-header" style="background: white; border-bottom: 1px solid var(--gray-200);">
+                <h5 class="modal-title" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700;">
+                    <i class="bi bi-exclamation-circle" style="color: var(--gray-600); font-size: 1.5rem;"></i>
+                    <span data-i18n="confirmDeleteAll">Delete All Jobs?</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 2rem;">
+                <p style="font-size: 1.125rem; margin-bottom: 1rem; color: var(--gray-700);" data-i18n="deleteAllQuestion">Are you sure you want to delete ALL job descriptions?</p>
+                <div style="background: var(--gray-50); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem; border: 1px solid var(--gray-200);">
+                    <p class="fw-bold mb-2" style="font-size: 1rem; color: var(--gray-900);"><i class="bi bi-info-circle"></i> <span data-i18n="warning">Warning</span></p>
+                    <ul class="mb-0" style="padding-left: 1.5rem; color: var(--gray-700);">
+                        <li data-i18n="allJobsDeleted">All job descriptions will be permanently deleted</li>
+                        <li data-i18n="matchDataLost">All matching data will be lost</li>
+                        <li data-i18n="cannotRecover">This cannot be undone or recovered</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--gray-200); padding: 1.5rem;">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i>
+                    <span data-i18n="cancelBtn">Cancel</span>
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteAllBtn">
+                    <i class="bi bi-trash-fill"></i>
+                    <span data-i18n="deleteAllBtn">Delete All Permanently</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectJobItem(id) {
+    document.getElementById('job_' + id).checked = true;
+    document.querySelectorAll('.job-item').forEach(i => i.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    document.getElementById('matchButton').disabled = false;
+    
+    fetch(`/api/jobs/select/${id}`, { method: 'POST' })
+        .then(r => r.json())
+        .then(d => console.log('Job selected:', id))
+        .catch(e => console.error('Error:', e));
+}
+
+function deleteJob(id) {
+    // Get job title
+    const jobItem = event.target.closest('.job-item');
+    const jobTitle = jobItem.querySelector('.job-title').textContent;
+    
+    // Set item name in modal
+    document.getElementById('deleteItemName').textContent = jobTitle;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+    
+    // Handle confirm button
+    document.getElementById('confirmDeleteBtn').onclick = function() {
+        fetch(`/api/jobs/delete/${id}`, { method: 'DELETE' })
+            .then(r => r.json())
+            .then(d => { 
+                if (d.success) {
+                    modal.hide();
+                    location.reload();
+                }
+            })
+            .catch(e => {
+                alert('Error: ' + e);
+                modal.hide();
+            });
+    };
+}
+
+function deleteAllJobs() {
+    // Show delete all modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteAllModal'));
+    modal.show();
+    
+    // Handle confirm button
+    document.getElementById('confirmDeleteAllBtn').onclick = function() {
+        fetch('/api/jobs/delete-all', { method: 'DELETE' })
+            .then(r => r.json())
+            .then(d => { 
+                if (d.success) {
+                    modal.hide();
+                    location.reload();
+                }
+            })
+            .catch(e => {
+                alert('Error: ' + e);
+                modal.hide();
+            });
+    };
+}
+
+function viewJob(id) {
+    fetch(`/api/jobs/view/${id}`)
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('viewJobTitle').textContent = data.title;
+            document.getElementById('viewJobContent').textContent = data.description;
+            new bootstrap.Modal(document.getElementById('viewJobModal')).show();
+        })
+        .catch(e => alert('Error loading job'));
+}
+
+function matchJobs() {
+    if ({{ resume_count }} === 0) {
+        const lang = localStorage.getItem('preferredLanguage') || 'en';
+        alert(lang === 'ar' ? 'يرجى تحميل السير الذاتية أولاً!' : 'Please upload resumes first!');
+        window.location.href = "{{ url_for('resumes_page') }}";
+        return;
+    }
+    window.location.href = "{{ url_for('match_and_show_results') }}";
+}
+
+const pageTranslations = {
+    en: {
+        jobsTitle: "Job Management",
+        totalJobs: "Total Jobs",
+        resumesReady: "Resumes Ready",
+        addJob: "Add Job Description",
+        deleteAll: "Delete All",
+        selectJob: "Select a Job to Match:",
+        backResumes: "Back to Resumes",
+        matchNow: "Match & View Results",
+        noJobs: "No Job Descriptions Yet",
+        noJobsDesc: "Add job descriptions to match with your uploaded resumes.",
+        addFirstJob: "Add Your First Job",
+        addJobTitle: "Add Job Description",
+        jobTitleLabel: "Job Title:",
+        jobDescLabel: "Job Description:",
+        or: "OR",
+        uploadPDF: "Upload PDF:",
+        fileNote: "File upload takes priority if both provided",
+        cancel: "Cancel",
+        confirmDelete: "Confirm Delete",
+        deleteQuestion: "Are you sure you want to delete this job?",
+        cannotUndo: "This action cannot be undone.",
+        cancelBtn: "Cancel",
+        deleteBtn: "Delete Permanently",
+        confirmDeleteAll: "Delete All Jobs?",
+        deleteAllQuestion: "Are you sure you want to delete ALL job descriptions?",
+        warning: "Warning!",
+        allJobsDeleted: "All job descriptions will be permanently deleted",
+        matchDataLost: "All matching data will be lost",
+        cannotRecover: "This cannot be undone or recovered",
+        deleteAllBtn: "Delete All Permanently"
+    },
+    ar: {
+        jobsTitle: "إدارة الوظائف",
+        totalJobs: "إجمالي الوظائف",
+        resumesReady: "السير الجاهزة",
+        addJob: "إضافة وصف وظيفة",
+        deleteAll: "حذف الكل",
+        selectJob: "اختر وظيفة للمطابقة:",
+        backResumes: "العودة للسير",
+        matchNow: "مطابقة وعرض النتائج",
+        noJobs: "لا توجد وظائف",
+        noJobsDesc: "أضف وصف الوظائف للمطابقة مع السير الذاتية.",
+        addFirstJob: "أضف أول وظيفة",
+        addJobTitle: "إضافة وصف وظيفة",
+        jobTitleLabel: "عنوان الوظيفة:",
+        jobDescLabel: "وصف الوظيفة:",
+        or: "أو",
+        uploadPDF: "تحميل PDF:",
+        fileNote: "تحميل الملف له الأولوية",
+        cancel: "إلغاء",
+        confirmDelete: "تأكيد الحذف",
+        deleteQuestion: "هل أنت متأكد من حذف هذه الوظيفة؟",
+        cannotUndo: "لا يمكن التراجع عن هذا الإجراء.",
+        cancelBtn: "إلغاء",
+        deleteBtn: "حذف نهائياً",
+        confirmDeleteAll: "حذف جميع الوظائف؟",
+        deleteAllQuestion: "هل أنت متأكد من حذف جميع الوظائف؟",
+        warning: "تحذير!",
+        allJobsDeleted: "سيتم حذف جميع الوظائف نهائياً",
+        matchDataLost: "سيتم فقدان بيانات المطابقة",
+        cannotRecover: "لا يمكن التراجع أو الاسترجاع",
+        deleteAllBtn: "حذف الكل نهائياً"
+    }
+};
+
+Object.assign(translations.en, pageTranslations.en);
+Object.assign(translations.ar, pageTranslations.ar);
+</script>
+{% endblock %}
