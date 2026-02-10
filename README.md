@@ -223,13 +223,17 @@ pip install -r requirements.txt
 
 **requirements.txt:**
 ```
-Flask==2.3.0
-openai==1.3.0
-pdfplumber==0.9.0
-pytesseract==0.3.10
-pdf2image==1.16.0
-Pillow==10.0.0
+flask==3.0.0
 python-dotenv==1.0.0
+openai==1.54.4
+httpx==0.27.2
+pdfplumber==0.10.3
+pytesseract==0.3.10
+pdf2image==1.17.0
+Pillow==10.2.0
+numpy==1.26.3
+scikit-learn==1.4.0
+pandas==2.2.0
 ```
 
 ### **Step 4: Install Tesseract OCR**
