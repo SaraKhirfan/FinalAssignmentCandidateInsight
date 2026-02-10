@@ -249,11 +249,6 @@ pandas==2.2.0
 brew install tesseract
 ```
 
-**Linux (Ubuntu):**
-```bash
-sudo apt-get install tesseract-ocr
-```
-
 ### **Step 5: Configure Environment Variables**
 Create `.env` file in project root:
 ```env
