@@ -137,15 +137,33 @@ ANTI-HALLUCINATION RULES - CRITICAL:
 
 ### **Chain-of-Thought Reasoning**
 ```
-Follow these steps EXACTLY in order:
-
-Step 1: EXTRACT - List all skills mentioned in the resume
-Step 2: COMPARE - Match each required skill against candidate's skills
-Step 3: COUNT - Calculate (matched skills / total required) × 100
-Step 4: ANALYZE EXPERIENCE - Compare years: candidate [X] vs required [Y+]
-Step 5: ANALYZE EDUCATION - Compare levels: candidate [degree] vs required [degree]
-Step 6: CALCULATE WEIGHTED SCORE - (skills×0.4) + (experience×0.35) + (education×0.25)
-Step 7: VERIFY - Check your math adds up correctly
+MATCHING INSTRUCTIONS:
+        Step 1: COMPARE SKILLS
+        - Go through each skill in the required_skills list ({total_skills} skills total)
+        - Check if the candidate has this skill (exact or similar)
+        - Count matches and misses
+        Step 2: COMPARE EXPERIENCE (BE SPECIFIC!)
+        - Extract candidate's EXACT years of experience from resume
+        - Compare with required experience: {job_requirements.get('experience_requirement', 'Not specified')}
+        - CRITICAL: Use correct starting phrase based on comparison
+        - Format examples:
+          ✅ "Meets requirements: Has 3 years of mobile development, exceeding the 2+ years required"
+          ✅ "Meets requirements: Has 2 years of mobile development, meeting the 2+ years required"
+          ✅ "Does not meet: Has 1 year of experience, below the 2+ years required"
+          ✅ "Does not meet: No relevant experience mentioned in resume"
+        Step 3: COMPARE EDUCATION (BE SPECIFIC!)
+        - Extract candidate's education from resume
+        - Compare with required: {job_requirements.get('education_requirement', 'Not specified')}
+        - CRITICAL: State what candidate HAS (or "not mentioned")
+        - Format examples:
+          ✅ "Has Bachelor's in Computer Science, matching the requirement"
+          ✅ "Has Diploma in IT, below the required Bachelor's degree"
+          ✅ "No education mentioned in resume"
+        Step 4: CALCULATE SCORE (SHOW EXACT MATH!)
+        - Skills: (matched / {total_skills}) * 40 = X points
+        - Experience: Y points (0-35 based on match)
+        - Education: Z points (0-25 based on match)
+        - TOTAL: X + Y + Z = FINAL SCORE
 ```
 
 ### **Structured Output Enforcement**
