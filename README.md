@@ -125,13 +125,14 @@ The system follows a modern full-stack architecture:
 
 **After (2.1% hallucination rate):**
 ```
-CRITICAL RULES:
-1. ONLY extract information explicitly stated in the document
-2. DO NOT infer, assume, or generate plausible information
-3. If a field is missing, respond with 'Not mentioned'
-4. Use confidence score 0-20 for any uncertain extraction
 
-Now extract skills from this resume: {resume_text}
+ANTI-HALLUCINATION RULES - CRITICAL:
+1. ONLY extract information that is EXPLICITLY stated in the resume text
+2. If a field is not mentioned, leave it empty or use empty array []
+3. DO NOT infer, assume, or generate information not present
+4. DO NOT add generic skills that aren't mentioned
+5. If uncertain about a field, include a confidence score (0-100)
+
 ```
 
 ### **Chain-of-Thought Reasoning**
