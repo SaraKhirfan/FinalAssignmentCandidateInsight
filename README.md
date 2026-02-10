@@ -341,7 +341,7 @@ candidate-insights/
 2. **Auto-Math Verification:** Server-side validation caught and corrected 22% of AI calculation errors, bringing accuracy from 78% to 100%.
 3. **Prompt Engineering:** Anti-hallucination directives reduced fabricated information by 86% (from 15.3% to 2.1%), demonstrating the power of explicit constraints.
 
-### **What Limitations Did We Face?**
+### **What Limitations Did I Face?**
 1. **Scanned PDF Quality:** OCR accuracy heavily depends on scan quality; decorative backgrounds or low contrast can reduce extraction to <50%. Mitigation: Added pre-processing (contrast enhancement, background removal).
 2. **Arabic Technical Terms:** Transliteration struggled with mixed-language text (e.g., "Python" → "Bython"). Solution: Built exception dictionary of 200+ common tech terms.
 3. **Context Window:** Extremely long resumes (5+ pages) risk truncation. Addressed by chunking and summarizing non-critical sections.
@@ -370,13 +370,6 @@ candidate-insights/
 - [ ] **Video Interview Analysis:** Transcript parsing for soft skills evaluation
 - [ ] **Candidate Chatbot:** AI assistant answers applicant questions (backend pending)
 
-### **Technical Debt**
-- Migrate from JSON to PostgreSQL for production scalability
-- Implement Redis caching for API response optimization
-- Add Celery task queue for background processing
-- Create Docker container for easy deployment
-- Set up CI/CD pipeline (GitHub Actions)
-
 ---
 
 ## 📊 Model Comparison: GPT-4o-mini vs. GPT-4o
@@ -392,23 +385,6 @@ candidate-insights/
 
 ---
 
-## 🤝 Contributing
-
-Contributions welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-### **Code Style**
-- Python: Follow PEP 8
-- JavaScript: ESLint with Airbnb config
-- HTML/CSS: BEM methodology
-
----
-
 ## 🙏 Acknowledgments
 
 - **OpenAI:** GPT-4o-mini API for intelligent text processing
@@ -421,18 +397,4 @@ Contributions welcome! Please follow these steps:
 
 *Last Updated: February 2026*
 ```
-# Python
-__pycache__/
-*.py[cod]
-venv/
-.env
 
-# Data
-data/resumes/*.pdf
-data/parsed_resumes/*.json
-data/results/*.json
-
-# IDE
-.vscode/
-.idea/
-*.swp
