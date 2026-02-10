@@ -280,28 +280,24 @@ candidate-insights/
 │   ├── index.html            # Home page
 │   ├── resumes.html          # Resume upload page
 │   ├── jobs.html             # Job management page
-│   ├── results.html          # Match results page
+│   ├── results.html
+│   ├── uploads.html             
 │   └── help.html             # Help & guide page
 │
-├── static/                    # Static assets
-│   ├── css/
-│   │   └── style.css         # Custom styles
-│   ├── js/
-│   │   └── main.js           # JavaScript utilities
+├── static/                    # Static assets       
 │   └── images/
+│       ├── favicon.png
+│       ├── background.png 
 │       └── logo.png          # Brand logo
 │
 ├── data/                      # Data storage (JSON files)
-│   ├── resumes/              # Uploaded resume PDFs
-│   ├── parsed_resumes/       # Extracted resume data (JSON)
-│   ├── jobs/                 # Job descriptions (JSON)
-│   └── results/              # Matching results (JSON)
+│   ├── resumes/             
+│   └── jobs_description       
 │
-├── modules/                   # Python modules
-   ├── pdf_processor.py      # PDF extraction & OCR
-   ├── job_matcher.py        # AI matching logic
-   ├── prompt_templates.py   # Prompt engineering
-   └── validators.py         # Input validation
+├── app/                   
+   ├── resume_parser.py      
+   └── job_matcher.py        # AI matching logic
+
 ```
 
 ---
