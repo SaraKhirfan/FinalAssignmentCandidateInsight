@@ -55,7 +55,6 @@ The system follows a modern full-stack architecture:
 ### 🔒 **Privacy & Security**
 - **PII Masking:** CSS-based blur for names, emails, phone numbers
 - **Encrypted API:** Secure connections to OpenAI
-- **No Training Data:** API policy ensures resumes aren't used for model training
 
 ### ⚡ **Performance Optimization**
 - **OCR Fallback:** Tesseract processes scanned PDFs automatically
