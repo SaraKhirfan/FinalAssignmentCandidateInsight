@@ -383,15 +383,6 @@ candidate-insights/
 
 **Verdict:** GPT-4o-mini selected for production due to 33× cost advantage with only 3% accuracy trade-off—acceptable for initial screening where humans review flagged candidates.
 
----
-
-## 🙏 Acknowledgments
-
-- **OpenAI:** GPT-4o-mini API for intelligent text processing
-- **University of Jordan:** Academic support and resources
-- **Anthropic:** Claude for development assistance and documentation generation
-- **Bootstrap Team:** UI framework
-- **Tesseract OCR:** Open-source OCR engine
 
 ---
 
