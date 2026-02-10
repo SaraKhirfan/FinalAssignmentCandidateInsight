@@ -1,0 +1,35 @@
+{
+  "name": "Momen Abdallah",
+  "email": "momenabd392@gmail.com",
+  "phone": "(962)777470781",
+  "skills": [
+    "Java",
+    "Kotlin",
+    "XML",
+    "Jetpack Compose",
+    "Material Design",
+    "Dagger Hilt",
+    "Room Database",
+    "Retrofit",
+    "Git/GitHub",
+    "RxJava",
+    "Design Pattern",
+    "Kotlin Coroutines",
+    "Firebase",
+    "Clean Architecture",
+    "Architecture Patterns (MVVM)"
+  ],
+  "experience": "Freelance Android Developer since September 2023. Worked on various Android projects utilizing different development tools and technologies.",
+  "education": "Bachelor of Software Engineering, Jordan University of Science and Technology (September 2020 - January 2024), GPA: 3.8 / 4.2 (Excellent)",
+  "summary": "Junior Kotlin/Java Android developer seeking an opportunity to apply skills in real-world projects. Experienced in developing various Android applications using modern technologies.",
+  "confidence": {
+    "name": 100,
+    "email": 100,
+    "phone": 100,
+    "skills": 100,
+    "experience": 80,
+    "education": 100
+  },
+  "is_valid_cv": true,
+  "output_language": "en"
+}

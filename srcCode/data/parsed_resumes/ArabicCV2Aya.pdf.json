@@ -1,0 +1,37 @@
+{
+  "الاسم": "Aya Alhassan",
+  "البريد_الالكتروني": "aya.alhassan@email.com",
+  "الهاتف": "+962 7XXXXXXXX",
+  "المهارات": [
+    "Flutter",
+    "Dart",
+    "Agile",
+    "Clean Architecture",
+    "MVVM",
+    "RESTful APIs",
+    "JWT",
+    "Token-Based Auth",
+    "UI/UX",
+    "Git",
+    "Scrum",
+    "Firebase",
+    "Postman",
+    "Android Studio",
+    "VS Code",
+    "State Management (Provider, Bloc)",
+    "App Security Best Practices"
+  ],
+  "الخبرة": "مطور تطبيقات موبايل مع خبرة في استخدام Flutter وDart، وتطبيق مبادئ Agile. عملت على تطوير تطبيقات متعددة بما في ذلك تطبيقات E-Wallet وتطبيقات إدارية، مع التركيز على الأمان وأفضل الممارسات.",
+  "التعليم": "تدريب في Flutter & Dart – The Complete Guide (Udemy)، Mobile App Security Fundamentals – Coursera، Agile Project Management Basics – Google Digital Garage.",
+  "الملخص": "مطور تطبيقات موبايل ذو خبرة في استخدام Flutter وDart. أتمتع بخلفية قوية في تطوير التطبيقات مع التركيز على الأمان وأفضل الممارسات. أعمل بشكل جيد في بيئات Agile.",
+  "الثقة": {
+    "الاسم": 100,
+    "البريد_الالكتروني": 100,
+    "الهاتف": 80,
+    "المهارات": 100,
+    "الخبرة": 100,
+    "التعليم": 100
+  },
+  "is_valid_cv": true,
+  "output_language": "ar"
+}
