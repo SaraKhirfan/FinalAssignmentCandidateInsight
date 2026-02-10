@@ -298,15 +298,10 @@ candidate-insights/
 │   └── results/              # Matching results (JSON)
 │
 ├── modules/                   # Python modules
-│   ├── pdf_processor.py      # PDF extraction & OCR
-│   ├── job_matcher.py        # AI matching logic
-│   ├── prompt_templates.py   # Prompt engineering
-│   └── validators.py         # Input validation
-│
-└── tests/                     # Test suite
-    ├── test_accuracy.py      # Accuracy evaluation
-    ├── test_hallucination.py # Hallucination detection
-    └── test_edge_cases.py    # Edge case handling
+   ├── pdf_processor.py      # PDF extraction & OCR
+   ├── job_matcher.py        # AI matching logic
+   ├── prompt_templates.py   # Prompt engineering
+   └── validators.py         # Input validation
 ```
 
 ---
